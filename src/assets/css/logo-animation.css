@@ -1,0 +1,51 @@
+@keyframes glow-rotate {
+  0% {
+    opacity: 1;
+    transform: rotate(0deg);
+  }
+  50% {
+    opacity: 0.8;
+    transform: rotate(3deg);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(0deg);
+  }
+}
+
+.animate-logo {
+  animation: glow-rotate 2.5s infinite ease-in-out;
+  transform-origin: center;
+  transition: all 0.3s ease;
+}
+
+.header-logo:hover .animate-logo {
+  animation: none;
+  transform: scale(1.15);
+  opacity: 0.9;
+}
+
+.header-logo {
+  display: inline-block;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.header-logo::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  border-radius: 80px;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+}
+
+.header-logo:hover::after {
+  opacity: 1;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+} 

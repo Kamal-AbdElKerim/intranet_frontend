@@ -1,0 +1,60 @@
+.ti-custom-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.ti-custom-table th,
+.ti-custom-table td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ti-custom-table th > div {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Sort icon container */
+.ti-custom-table th > div > div {
+  position: relative;
+  width: 16px;
+  height: 16px;
+}
+
+/* Sort icon animations */
+.ti-custom-table th > div > div svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transition: all 0.2s ease-in-out;
+}
+
+.ti-custom-table th > div > div svg:hover {
+  transform: scale(1.2);
+}
+
+/* Active sort column style */
+.ti-custom-table th > div.active {
+  color: var(--primary);
+}
+
+/* Animation for icon swap */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.8); }
+}
+
+.ti-custom-table th > div > div svg.opacity-100 {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.ti-custom-table th > div > div svg.opacity-0 {
+  animation: fadeOut 0.2s ease-in-out;
+} 

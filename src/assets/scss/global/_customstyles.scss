@@ -1,0 +1,781 @@
+@media (max-width: 991.98px) {
+  [data-toggled="open"] #responsive-overlay {
+    visibility: visible;
+    --tw-bg-opacity: 0.5;
+  }
+}
+
+#search-modal {
+  .ti-modal-body {
+    .box-body {
+      .ti-list-group {
+        @apply p-3 rounded-none border border-t-0;
+
+        &:first-child {
+          @apply p-3 rounded-tl-sm rounded-tr-sm border-t #{!important};
+        }
+      }
+    }
+  }
+}
+
+.Select2__indicator-separator {
+  @apply hidden;
+}
+
+[data-nav-layout="vertical"] {
+  .main-menu {
+    @apply mx-0 pb-20 #{!important};
+  }
+}
+
+@media (max-width: 991.98px) {
+  .mail-navigation {
+    @apply hidden;
+  }
+}
+
+pre {
+  @apply overflow-scroll;
+}
+
+.leaflet-container {
+  @apply z-[9];
+}
+
+.table select {
+  @apply rounded-sm text-[13px] leading-4 pe-8 px-3 py-[0.2rem];
+}
+
+input.gridjs-input {
+  @apply dark:bg-bodybg text-defaulttextcolor dark:text-defaulttextcolor/70 border-defaultborder dark:border-defaultborder/10 #{!important};
+}
+
+.swiper {
+  @apply rtl:dir-ltr;
+}
+
+.swiper-backface-hidden .swiper-slide {
+  @apply rtl:dir-rtl;
+}
+
+.Select2__control {
+  @apply min-h-[41px] dark:bg-bodybg #{!important};
+}
+
+.crypto-buy-sell {
+  .Select2__control {
+    @apply w-[100px];
+  }
+}
+
+.Select2__dropdown-indicator {
+  @apply after:rtl:left-[11.5px] after:rtl:right-auto #{!important};
+}
+
+.form-control {
+  @apply dark:bg-bodybg;
+}
+
+.Select2__menu {
+  @apply dark:bg-bodybg #{!important};
+}
+
+.Select2__option--is-focused {
+  @apply bg-primary text-white #{!important};
+}
+
+.hs-overlay-backdrop {
+  @apply z-50 #{!important};
+}
+
+.react-datepicker__input-container input {
+  @apply dark:bg-bodybg;
+}
+
+.react-datepicker-wrapper {
+  @apply w-full;
+}
+
+.yarl__slide_image {
+  @apply rounded-md;
+}
+
+.ti-form-checkbox {
+  @apply dark:bg-bodybg dark:border-defaultborder/10;
+}
+
+.dropzone-file-upload .file_input {
+  @apply h-40 w-full dark:bg-bodybg rounded-md border-defaultborder dark:border-defaultborder/10 #{!important};
+}
+
+.react-datepicker__time-container {
+  @apply dark:border-defaultborder/10 #{!important};
+}
+
+// .MuiRating-root.MuiRating-sizeLarge.Mui-readOnly.MuiRating-readOnly {
+//   @apply flex-wrap;
+// }
+
+.MuiRating-icon.MuiRating-iconEmpty {
+  @apply dark:text-defaulttextcolor;
+}
+
+.rmsc {
+  @apply dark:bg-bodybg #{!important};
+}
+
+.pickr-container-primary .pickr .pcr-button {
+  @apply after:bg-primary #{!important};
+}
+
+.pickr-container-background .pickr .pcr-button {
+  @apply after:bg-primary #{!important};
+}
+
+.companies-search-input .Select2__value-container {
+  @apply h-[43px];
+}
+
+// textarea {
+//   @apply dark:bg-bodybg border dark:border-defaultborder/10 #{!important};
+// }
+
+.total-mails .mail-messages {
+  @apply overflow-scroll #{!important};
+}
+
+.main-mail-container {
+  .scrollbar-container {
+    @apply h-full #{!important};
+  }
+}
+
+.mails-information {
+  .mail-info-body {
+    @apply overflow-scroll #{!important};
+  }
+}
+
+#profile-posts-scroll {
+  @apply overflow-scroll #{!important};
+}
+
+.companies-search-input .Select2__value-container {
+  @apply h-[42px] #{!important};
+
+  .css-w9q2zk-Input2 {
+    @apply -m-[5px] #{!important};
+  }
+}
+
+.main-chart-wrapper .chat-users-tab,
+.main-chart-wrapper .chat-groups-tab,
+.main-chart-wrapper .chat-calls-tab {
+  @apply overflow-y-scroll #{!important};
+}
+
+#chat-msg-scroll {
+  @apply h-full #{!important};
+}
+
+.chat-user-details {
+  @apply overflow-y-scroll #{!important};
+}
+
+.simplebar-scrollbar:before {
+  @apply bg-gray-400 rounded-[0.3rem] end-0 w-[0.375rem] #{!important};
+}
+
+.simplebar-track.simplebar-horizontal {
+  @apply hidden;
+}
+
+// .ScrollbarsCustom-Track {
+//   @apply w-0 bg-light #{!important};
+// }
+// .ScrollbarsCustom-Thumb {
+//   @apply bg-defaultbackground #{!important};
+// }
+// .app-sidebar .ScrollbarsCustom-Thumb {
+//   @apply hidden;
+// }
+[data-nav-layout="vertical"] {
+  .main-sidebar {
+    .scrollbar-container {
+      @apply overflow-visible #{!important};
+    }
+
+    // .ScrollbarsCustom-Scroller {
+    //   @apply relative overflow-hidden p-0 m-0 #{!important};
+    // }
+
+    // .ScrollbarsCustom-Wrapper,
+    // .ScrollbarsCustom-Scroller {
+    //   @apply overflow-visible #{!important};
+    // }
+  }
+}
+
+[data-nav-layout="horizontal"] {
+  .main-sidebar {
+    // .ScrollbarsCustom-Wrapper,
+    // .ScrollbarsCustom-Scroller {
+    //   @apply visible #{!important};
+    // }
+    // .ScrollbarsCustom-Wrapper {
+    //   @apply overflow-visible #{!important};
+    // }
+    // .ScrollbarsCustom {
+    //   @apply w-auto h-auto #{!important};
+    // }
+
+    // .ScrollbarsCustom-Scroller {
+    //   @apply relative overflow-visible p-0 m-0 #{!important};
+    // }
+  }
+}
+
+[data-vertical-style="doublemenu"] {
+  .main-sidebar {
+    .scrollbar-container {
+      @apply absolute top-0 overflow-visible #{!important};
+    }
+
+    // .ScrollbarsCustom-Scroller {
+    //   @apply p-0 m-0 overflow-visible inset-auto #{!important};
+    // }
+    // .ScrollbarsCustom {
+    //   @apply w-auto h-auto #{!important};
+    // }
+    // .ScrollbarsCustom,
+    // .ScrollbarsCustom-Scroller {
+    //   position: initial !important;
+    // }
+  }
+}
+
+[data-nav-layout="horizontal"] {
+  .main-menu-container {
+    @apply overflow-hidden w-full #{!important};
+  }
+}
+
+@media (min-width: 992px) {
+  [data-nav-style="menu-click"][data-nav-layout="horizontal"] {
+    .app-sidebar .slide.has-sub .slide-menu.child1 {
+      @apply top-[2.938rem] start-auto #{!important};
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  [data-nav-style="menu-hover"][data-nav-layout="horizontal"] {
+    .app-sidebar .slide.has-sub .slide-menu.child1 {
+      @apply top-[2.938rem] start-auto #{!important};
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  [data-nav-style="icon-click"][data-nav-layout="horizontal"] {
+    .app-sidebar .slide.has-sub .slide-menu.child1 {
+      @apply top-[2.938rem] start-auto #{!important};
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  [data-nav-style="icon-hover"][data-nav-layout="horizontal"] {
+    .app-sidebar .slide.has-sub .slide-menu.child1 {
+      @apply top-[2.938rem] start-auto #{!important};
+    }
+  }
+}
+
+.file-manager-container .file-folders-container,
+.file-manager-container .filemanager-file-details {
+  @apply overflow-scroll;
+}
+
+.landing-body {
+  .icon-style {
+    .ti {
+      @apply text-[22px] #{!important};
+    }
+  }
+}
+
+.basicsteps {
+  @apply md:flex block justify-evenly border-b border-dashed border-defaultborder dark:border-defaultborder/20;
+
+  .btn {
+    @apply relative py-4 px-8 cursor-pointer flex-grow text-sm font-medium items-center dark:text-defaulttextcolor/70 text-defaulttextcolor text-center w-full inline-flex;
+
+    .basicstep-icon {
+      @apply me-2 align-middle w-[1.875rem] h-[1.875rem] p-[0.4rem] rounded-full bg-light block;
+    }
+
+    &.active {
+      @apply text-primary before:bg-primary before:rounded-full before:h-[0.175rem] before:w-full before:absolute before:inset-x-0 before:bottom-0;
+
+      .basicstep-icon {
+        @apply bg-primary/10;
+      }
+    }
+  }
+}
+
+.ps__thumb-y {
+  @apply bg-gray-100 dark:bg-black/20 #{!important};
+}
+
+.react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box ul.react-datepicker__time-list li.react-datepicker__time-list-item:hover {
+  @apply dark:bg-black/20 #{!important};
+}
+
+input[type="color" i]::-webkit-color-swatch {
+  @apply rounded-sm h-[2em] w-[2em];
+}
+
+.form-select {
+  @apply rtl:bg-[left_0.5rem_center];
+}
+
+#chart-months {
+  .apexcharts-svg.apexcharts-zoomable.hovering-pan {
+    @apply bg-transparent #{!important};
+  }
+}
+
+#chart-years {
+  .apexcharts-svg.apexcharts-zoomable {
+    @apply bg-transparent #{!important};
+  }
+
+  .apexcharts-selection-rect {
+    @apply dark:stroke-white/80 dark:fill-white/80 #{!important};
+  }
+}
+
+.apexcharts-title-text {
+  @apply dark:fill-white #{!important};
+}
+
+.selectpage {
+  @apply bg-white dark:bg-bodybg2 border-defaultborder dark:border-defaultborder/10;
+}
+
+#sort-table {
+  .tabulator-footer {
+    @apply border-t-0 #{!important};
+  }
+
+  .tabulator-row {
+    @apply border-t-0 #{!important};
+
+    // &:first-child {
+    .tabulator-cell {
+      &:first-child {
+        @apply border-s-0;
+      }
+    }
+
+    .tabulator-cell {
+      @apply border-s;
+    }
+  }
+
+  .tabulator-header {
+    @apply border-b border-defaultborder dark:border-defaultborder/10 #{!important};
+  }
+}
+
+#donut-pattern {
+  .apexcharts-text.apexcharts-datalabel-label {
+    @apply fill-defaulttextcolor;
+  }
+}
+
+#radialbar-multiple {
+  .apexcharts-text.apexcharts-datalabel-label {
+    @apply dark:fill-defaulttextcolor/70;
+  }
+}
+
+input[type="color" i]::-webkit-color-swatch {
+  @apply border-defaultborder dark:border-defaultborder/10 #{!important};
+}
+
+.top-companies .name-col {
+  @apply min-w-[220px];
+}
+
+#bascitable {
+  tbody {
+    tr {
+      &:last-child {
+        td {
+          @apply border-b-0 #{!important};
+        }
+      }
+    }
+  }
+}
+
+.dark[data-vertical-style="doublemenu"][data-menu-styles="transparent"][data-toggled="double-menu-open"] {
+
+  .app-sidebar .slide-menu.child1 .side-menu__item,
+  .app-sidebar .slide-menu.child2 .side-menu__item,
+  .app-sidebar .slide-menu.child3 .side-menu__item {
+    @apply my-1;
+  }
+}
+
+@media screen and (min-width:992px) and (hover: none) and (pointer: coarse) {
+  [data-nav-style="menu-hover"][data-toggled="menu-hover-closed"] {
+    .slide {
+      .side-menu__item {
+        z-index: 0;
+      }
+
+      &.has-sub {
+        .side-menu__item {
+          z-index: -1;
+        }
+      }
+
+      .slide-menu {
+        .slide {
+          .side-menu__item {
+            z-index: 0;
+          }
+
+          &.has-sub {
+            .side-menu__item {
+              z-index: -1;
+            }
+          }
+        }
+        .slide-menu {
+          .slide {
+            .side-menu__item {
+              z-index: 0;
+            }
+  
+            &.has-sub {
+              .side-menu__item {
+                z-index: -1;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  [data-nav-style="icon-hover"][data-toggled="icon-hover-closed"] {
+    .slide {
+      .side-menu__item {
+        z-index: 0;
+      }
+
+      &.has-sub {
+        .side-menu__item {
+          z-index: -1;
+        }
+      }
+
+      .slide-menu {
+        .slide {
+          .side-menu__item {
+            z-index: 0;
+          }
+
+          &.has-sub {
+            .side-menu__item {
+              z-index: -1;
+            }
+          }
+        }
+        .slide-menu {
+          .slide {
+            .side-menu__item {
+              z-index: 0;
+            }
+  
+            &.has-sub {
+              .side-menu__item {
+                z-index: -1;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+
+}
+
+
+@media (min-width: 992px) {
+  [data-menu-styles="dark"][data-nav-layout="horizontal"][data-header-styles="transparent"] {
+    .app-header .horizontal-logo .header-logo .toggle-white {
+      @apply hidden;
+    }
+  }
+}
+
+#crm-revenue-analytics {
+  .apexcharts-title-text {
+    @apply fill-defaulttextcolor/70;
+  }
+}
+
+[data-nav-layout="vertical"] {
+  .app-sidebar .side-menu__item.active {
+    @apply my-[0.188rem] #{!important};
+  }
+}
+
+[data-nav-layout="vertical"][data-menu-styles="light"][data-nav-style="icon-click"][data-toggled="icon-click-closed"][bg-img] {
+  .app-sidebar .main-sidebar-header {
+    @apply dark:border-[defaultborder/10] #{!important};
+  }
+}
+[bg-img="bgimg1"], [bg-img="bgimg2"], [bg-img="bgimg3"], [bg-img="bgimg4"], [bg-img="bgimg5"] {
+  &[data-menu-styles=light].dark .app-sidebar .main-sidebar-header {
+      @apply border-black/10 #{!important}
+  }
+}
+#sessions {
+  .apexcharts-datalabels-group .apexcharts-text.apexcharts-datalabel-label {
+      @apply fill-defaulttextcolor #{!important};
+  }
+}
+.collections-data .hs-dropdown-menu.ti-dropdown-menu {
+  @apply transform-none #{!important};
+}
+.collections-data .hs-dropdown-menu.ti-dropdown-menu {
+  inset: auto 20px 75px auto !important;
+}
+
+[data-nav-layout="horizontal"][data-nav-style="menu-click"]
+  .app-sidebar
+  .slide.has-sub
+  .slide-menu.child1.force-left,
+[data-nav-layout="horizontal"][data-nav-style="menu-hover"]
+  .app-sidebar
+  .slide.has-sub
+  .slide-menu.child1.force-left,
+[data-nav-layout="horizontal"][data-nav-style="icon-click"]
+  .app-sidebar
+  .slide.has-sub
+  .slide-menu.child1.force-left,
+[data-nav-layout="horizontal"][data-nav-style="icon-hover"]
+  .app-sidebar
+  .slide.has-sub
+  .slide-menu.child1.force-left {
+  inset-inline-end: 0 !important;
+}
+[data-nav-layout="horizontal"][data-nav-style="menu-click"]
+  .app-sidebar
+  .slide.has-sub
+  .slide-menu.child2.force-left,
+[data-nav-layout="horizontal"][data-nav-style="menu-click"]
+  .app-sidebar
+  .slide.has-sub
+  .slide-menu.child3.force-left,
+[data-nav-layout="horizontal"][data-nav-style="menu-hover"]
+  .app-sidebar
+  .slide.has-sub
+  .slide-menu.child2.force-left,
+[data-nav-layout="horizontal"][data-nav-style="menu-hover"]
+  .app-sidebar
+  .slide.has-sub
+  .slide-menu.child3.force-left,
+[data-nav-layout="horizontal"][data-nav-style="icon-click"]
+  .app-sidebar
+  .slide.has-sub
+  .slide-menu.child2.force-left,
+[data-nav-layout="horizontal"][data-nav-style="icon-click"]
+  .app-sidebar
+  .slide.has-sub
+  .slide-menu.child3.force-left,
+[data-nav-layout="horizontal"][data-nav-style="icon-hover"]
+  .app-sidebar
+  .slide.has-sub
+  .slide-menu.child2.force-left,
+[data-nav-layout="horizontal"][data-nav-style="icon-hover"]
+  .app-sidebar
+  .slide.has-sub
+  .slide-menu.child3.force-left {
+  inset-inline-start: -100% !important;
+}
+[dir="rtl"] {
+  .ti-chevron-right:before {
+    @apply content-["\ea60"];
+  }
+}
+.react-select__menu-list {
+  @apply p-0 #{!important};
+}
+.react-select__menu {
+  @apply m-0 top-[80%] #{!important};
+}
+.apexcharts-text.apexcharts-datalabel-label {
+  @apply fill-defaulttextcolor dark:fill-white/50 #{!important};
+}
+@media (min-width:992px) {
+  [data-nav-layout="vertical"][data-vertical-style="doublemenu"] {
+    .app-sidebar .main-sidebar-header {
+      @apply border-e-0;
+    }
+  }
+  [data-nav-layout="vertical"][data-toggled="double-menu-open"] {
+    .app-sidebar {
+      @apply border-e-0;
+    }
+  }
+}
+@media (min-width:992px) {
+  [data-nav-layout="horizontal"][data-nav-style="menu-click"]
+  .main-menu > .slide.has-sub > .side-menu__item {
+    @apply ps-[0.75rem] pe-[1.75rem] #{!important};
+  } 
+}
+.react-select__input-container {
+  @apply dark:text-white/50 #{!important};
+}
+.react-datepicker__close-icon {
+  @apply end-3 start-auto #{!important};
+}
+.apexcharts-pie text {
+  @apply fill-[rgb(var(--default-text-color))];
+}
+.uploader__modal {
+  @apply dark:bg-bodybg;
+}
+.uploader__widget-base__modal-bg {
+  @apply dark:text-defaultborder/10;
+}
+// .table {
+//   @apply me-px;
+// }
+.react-select__indicator-separator {
+  @apply hidden
+}
+.slide.has-sub {
+  @apply grid;
+}
+.ps__rail-y:hover > .ps__thumb-y, .ps__rail-y:focus > .ps__thumb-y, .ps__rail-y.ps--clicking .ps__thumb-y {
+  @apply w-[2px] #{!important};
+}
+.ps__rail-y {
+  @apply w-[4px] dark:bg-white/10 #{!important};
+}
+.uploader__submitted-file__container {
+  @apply dark:bg-bodybg2 #{!important};
+}
+.uploader__submitted-file__name {
+  @apply dark:text-defaulttextcolor/70 #{!important};
+}
+.react-datepicker__time-container {
+  @apply border border-l-defaultborder #{!important};
+}
+#pie-basic,#donut-simple,#pie-monochrome,#pie-image,#donut-pattern {
+  .apexcharts-pie text {
+    @apply fill-white #{!important};
+  } 
+} 
+
+.email-passing-options {
+  .react-select__clear-indicator {
+    @apply hidden;
+  }
+}
+
+@media (min-width: 623px) {
+  #security .Select2__control, #buycrypto .Select2__control, .companies-search-input .Select2__control {
+    @apply rounded-none #{!important};
+  }
+}
+
+.MuiRating-root.MuiRating-sizeMedium {
+  @apply rtl:dirrtl; 
+}
+
+[dir="rtl"] {
+  #slider-round, #slider-square {
+      direction: ltr;
+  }
+}
+.react-datepicker-popper[data-placement^=bottom] .react-datepicker__triangle,
+.react-datepicker-popper[data-placement^=top] .react-datepicker__triangle {
+  @apply dark:fill-white/10 dark:text-white/10 dark:stroke-white/10 #{!important};
+}
+
+#grid-header-fixed .gridjs-container .gridjs-wrapper .gridjs-thead .gridjs-tr th {
+  top: -0.2rem !important;
+}
+
+.sun-editor .se-toolbar{
+  @apply dark:bg-bodybg outline outline-1 outline-defaultborder/10 #{!important};
+}
+.sun-editor {
+  @apply dark:border-defaultborder/10 dark:bg-bodybg #{!important};
+}
+.sun-editor .se-resizing-bar {
+  @apply dark:bg-bodybg border-t dark:border-defaultborder/10 #{!important};
+}
+.sun-editor .se-btn-module-border {
+  @apply dark:border dark:border-defaultborder/10 #{!important};
+}
+.sun-editor button,
+.sun-editor-editable {
+  @apply dark:text-defaulttextcolor/60 #{!important};
+}
+.sun-editor .se-btn:enabled:hover,
+.sun-editor .se-btn-list.default_value,
+.sun-editor .se-btn-list:hover,
+.sun-editor .se-btn:enabled.on {
+  @apply dark:bg-bodybg #{!important};
+}
+.sun-editor .se-list-layer {
+  @apply dark:bg-bodybg dark:border-defaultborder/10 shadow-none #{!important};
+}
+.se-dialog-content {
+  @apply dark:bg-bodybg #{!important}; 
+}
+.sun-editor textarea{
+  @apply dark:border-defaultborder/10 #{!important}; 
+}
+.sun-editor-editable {
+  @apply dark:bg-bodybg #{!important};
+}
+.sun-editor .se-dialog-tabs button.active {
+  @apply dark:bg-bodybg #{!important};
+}
+.sun-editor .se-dialog-tabs button {
+ @apply dark:bg-bodybg2 dark:border-r dark:border-defaultborder/10 #{!important};
+}
+.sun-editor .se-dialog .se-dialog-inner .se-dialog-header,
+.sun-editor .se-dialog-tabs {
+  @apply dark:border-b dark:border-defaultborder/10 #{!important};
+}
+.sun-editor .se-dialog .se-dialog-inner .se-dialog-content label,
+.sun-editor .se-dialog .se-dialog-inner .se-dialog-header .se-modal-title {
+  @apply dark:text-defaulttextcolor/60 #{!important};
+}
+.sun-editor .se-dialog .se-dialog-inner .se-dialog-form .se-input-form.se-input-url,
+.sun-editor .se-dialog .se-dialog-inner .se-dialog-form .se-input-form {
+  @apply dark:bg-bodybg dark:border-defaultborder/10 #{!important};
+}
+.sun-editor .se-dialog .se-dialog-inner .se-dialog-footer {
+  @apply dark:border-t dark:border-defaultborder/10 #{!important};
+}
+.sun-editor .se-dialog .se-dialog-inner .se-dialog-form .se-input-control {
+  @apply dark:bg-bodybg dark:border-defaultborder/10 #{!important};
+}
