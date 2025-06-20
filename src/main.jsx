@@ -16,6 +16,7 @@ import ListeDemandes from './container/Pages_DemandesAdministratives/Demandes/li
 import ListeDemandesDirecteur from './container/Pages_DemandesAdministratives/Demandes/listeDemandesDirecteur.jsx'
 import Home from './container/Home/Home.jsx'
 import Users from './container/Pages_DashboardAdmin/users/users.jsx'
+import Profile from './container/Pages_DemandesAdministratives/profile/Profile.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.Fragment>
@@ -41,7 +42,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path="DemandesAdministratives/listeDemandes" element={<ListeDemandes />} />
                   <Route path="DemandesAdministratives/listeDemandesValidation" element={<ListeDemandesDirecteur />} />
                   <Route path="admin/Users" element={<Users />} />
-                  <Route path="admin/Users" element={<Users />} />
+                  <Route path="admin/Profile" element={<Profile />} />
                
                   {/* <Route path="DemandesAdministratives/pages/empty" element={<Empty />} /> */}
                   {/* ... other routes ... */}

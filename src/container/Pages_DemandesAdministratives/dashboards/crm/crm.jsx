@@ -366,15 +366,17 @@ const Crm = () => {
               <thead>
                 <tr>
                   <th className="text-start">Utilisateur</th>
-                  <th className="text-center">Total Demandes</th>
+                  <th className="text-center">Total</th>
                   <th className="text-center">Documents</th>
                   <th className="text-center">Congés</th>
+                  <th className="text-center">Solde</th>
+                  <th className="text-center">Solde Traité</th>
                 </tr>
               </thead>
               <tbody>
                 {currentUsers.length === 0 ? (
                   <tr>
-                    <td colSpan="4" className="text-center py-4 text-gray-500">
+                    <td colSpan="6" className="text-center py-4 text-gray-500">
                       Aucun utilisateur trouvé
                     </td>
                   </tr>
@@ -392,19 +394,29 @@ const Crm = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="text-center">
+                      <td className="text-center align-middle">
                         <span className="badge bg-primary/10 text-primary font-semibold">
                           {user.total_demandes}
                         </span>
                       </td>
-                      <td className="text-center">
+                      <td className="text-center align-middle">
                         <span className="badge bg-info/10 text-info font-semibold">
                           {user.documents_count}
                         </span>
                       </td>
-                      <td className="text-center">
+                      <td className="text-center align-middle">
                         <span className="badge bg-success/10 text-success font-semibold">
                           {user.conges_count}
+                        </span>
+                      </td>
+                      <td className="text-center align-middle">
+                        <span className="badge bg-warning/10 text-warning font-semibold">
+                          {user.solde || 0} jours
+                        </span>
+                      </td>
+                      <td className="text-center align-middle">
+                        <span className="badge bg-secondary/10 text-secondary font-semibold">
+                          {user.solde_Traité || 0} jours
                         </span>
                       </td>
                     </tr>
@@ -1172,22 +1184,45 @@ const Crm = () => {
                     </span>
                     <div>
                       <span className="font-semibold text-[#8c9097] dark:text-white/50 block mb-1 text-sm">Solde Congé</span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-3xl font-bold text-gray-900 dark:text-white transition-all duration-500 hover:text-warning hover:scale-125">{user?.data?.solde || 0}</span>
-                        <TypewriterText text="jours" speed={150} />
+                      {user?.data?.roles?.some(role => role.name === 'Admin RH') && showAllData ? (
+                        <div className="flex flex-col items-start gap-2">
+                          <div className="flex items-center gap-2">
+                            <i className="ri-information-line text-warning text-xl"></i>
+                            <span className="text-base font-medium text-gray-700 dark:text-gray-300">Allez dans</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-bold text-primary bg-primary/10 px-3 py-1 rounded-lg border border-primary/20">
+                              Données personnelles
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-base font-medium text-gray-700 dark:text-gray-300">pour voir le solde</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <span className={`text-3xl font-bold transition-all duration-500 hover:scale-125 ${
+                            (user?.data?.solde || 0) < 0 ? 'solde-negative' : 'text-gray-900 dark:text-white hover:text-warning'
+                          }`}>
+                            {user?.data?.solde || 0}
+                          </span>
+                          <TypewriterText text="jours" speed={150} />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  {!(user?.data?.roles?.some(role => role.name === 'Admin RH') && showAllData) && (
+                    <div className="flex flex-col sm:flex-row gap-2 mt-2">
+                      <div className="flex items-center gap-1 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold transition-all duration-300 hover:bg-primary/20 hover:scale-105">
+                        <i className="ri-award-line"></i>
+                        Solde Traité: <span className="ml-1">{user?.data?.solde_Traité || 0} jours</span>
                       </div>
+                      {/* <div className="flex items-center gap-1 bg-warning/10 text-warning px-3 py-1 rounded-full text-xs font-semibold transition-all duration-300 hover:bg-warning/20 hover:scale-105">
+                        <i className="ri-time-line"></i>
+                        En cours: <span className="ml-1">2</span>
+                      </div> */}
                     </div>
-                  </div>
-                  <div className="flex flex-col sm:flex-row gap-2 mt-2">
-                    <div className="flex items-center gap-1 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold transition-all duration-300 hover:bg-primary/20 hover:scale-105">
-                      <i className="ri-award-line"></i>
-                      Solde Traité: <span className="ml-1">{user?.data?.solde_Traité || 0} jours</span>
-                    </div>
-                    {/* <div className="flex items-center gap-1 bg-warning/10 text-warning px-3 py-1 rounded-full text-xs font-semibold transition-all duration-300 hover:bg-warning/20 hover:scale-105">
-                      <i className="ri-time-line"></i>
-                      En cours: <span className="ml-1">2</span>
-                    </div> */}
-                  </div>
+                  )}
                 </div>
               </div>
 

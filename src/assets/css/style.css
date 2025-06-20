@@ -177,6 +177,29 @@ Background Image
   color: #ef4444;
 }
 
+/* Custom styles for negative solde congé */
+.solde-negative {
+  color: #dc2626 !important;
+  font-weight: bold;
+  text-shadow: 0 0 8px rgba(220, 38, 38, 0.3);
+  animation: pulse-negative 2s infinite;
+}
+
+@keyframes pulse-negative {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.solde-negative:hover {
+  color: #b91c1c !important;
+  transform: scale(1.05);
+  transition: all 0.3s ease;
+}
+
 /* Start Icons */
 /* Start Icons */
 /* Start::app-header */
@@ -3936,10 +3959,6 @@ label {
   @apply text-white bg-white/[0.05] before:border-white;
 }
 .app-sidebar .side-menu__item.active .side-menu__label,
-.app-sidebar .side-menu__item.active .side-menu__angle, .app-sidebar .side-menu__item:hover .side-menu__label,
-.app-sidebar .side-menu__item:hover .side-menu__angle {
-  @apply text-white;
-}
 .app-sidebar .side-menu__item.active .side-menu__icon, .app-sidebar .side-menu__item:hover .side-menu__icon {
   @apply fill-white text-white;
 }
@@ -5175,7 +5194,7 @@ label {
 [bg-img=bgimg1][data-menu-styles=light] .app-sidebar .main-sidebar-header {
   @apply bg-transparent !important;
 }
-[bg-img=bgimg5].light[data-menu-styles=dark] .app-sidebar,
+[bg-img=bgimg5].light[data-menu-styles=dark] .app-sidebar, [bg-img=bgimg5].light[data-menu-styles=dark] .app-sidebar,
 [bg-img=bgimg4].light[data-menu-styles=dark] .app-sidebar,
 [bg-img=bgimg3].light[data-menu-styles=dark] .app-sidebar,
 [bg-img=bgimg2].light[data-menu-styles=dark] .app-sidebar,
@@ -5993,10 +6012,6 @@ label {
 [data-header-styles=light] .app-header .main-header-container .header-link-icon {
   @apply hover:bg-white/20 text-[#536485] fill-black/60 !important;
 }
-[data-header-styles=light] .app-header .animated-arrow span {
-  @apply bg-[#536485];
-}
-[data-header-styles=light] .app-header .animated-arrow span:before,
 [data-header-styles=light] .app-header .animated-arrow span:after {
   @apply bg-[#536485] !important;
 }
@@ -10778,6 +10793,9 @@ hr {
 .ti-dropdown-toggle .ti-dropdown-toggle {
   @apply after:inline-block after:ms-1 after:align-[0] after:content-[""] after:border-0 after:text-[0.6rem] after:font-semibold;
 }
+.ti-dropdown-toggle .ti-dropdown-toggle {
+  @apply after:inline-block after:ms-1 after:align-[0] after:content-[""] after:border-0 after:text-[0.6rem] after:font-semibold;
+}
 .ti-dropdown-toggle .ti-dropup .ti-dropdown-toggle {
   @apply after:inline-block after:ms-1 after:align-[0] after:content-[""] after:border-0 after:text-[0.6rem] after:font-semibold;
 }
@@ -11998,12 +12016,6 @@ hr {
 .menu-image .bgimage-input.bg-img2.form-check-input:checked[type=radio] {
   @apply bg-none !important;
 }
-.menu-image .bgimage-input.bg-img2 {
-  @apply bg-[url("../images/menu-bg-images/bg-img2.jpg")] bg-center bg-cover bg-no-repeat !important;
-}
-.menu-image .bgimage-input.bg-img2.form-check-input:checked[type=radio] {
-  @apply bg-none !important;
-}
 
 .pickr-container-primary .pickr .pcr-button,
 .pickr-container-background .pickr .pcr-button {
@@ -12575,12 +12587,6 @@ caption {
 }
 .progress-custom .progress-bar.progress-warning .progress-bar-value {
   @apply after:border-t-warning;
-}
-.progress-custom .progress-bar.progress-info {
-  @apply bg-info after:border-info !important;
-}
-.progress-custom .progress-bar.progress-info .progress-bar-value {
-  @apply after:border-t-info;
 }
 .progress-custom .progress-bar.progress-success {
   @apply bg-success after:border-success !important;
