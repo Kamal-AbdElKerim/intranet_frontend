@@ -22,7 +22,7 @@ const Error500 = () => {
                                     <p className="mb-0 opacity-[0.7]">We are sorry for the inconvenience,The page you are trying to access has been removed or never been existed.</p>
                                 </div>
                             </div>
-                            <Link to={`Home`} className="ti-btn bg-primary text-white font-semibold"><i
+                            <Link to={`DemandesAdministratives/dashboards`} className="ti-btn bg-primary text-white font-semibold"><i
                   className="ri-arrow-left-line align-middle inline-block"></i>BACK TO HOME</Link>                        </div>
                         <div className="xl:col-span-3"></div>
                     </div>

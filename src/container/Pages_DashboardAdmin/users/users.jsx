@@ -130,7 +130,7 @@ const Users = () => {
       
       if (response.data?.status === 'success' && response.data?.data) {
         const { data, current_page, per_page, total, last_page } = response.data.data;
-        console.log(response);
+        // console.log(response);
         setUsers(data || []);
         setPagination({
           current: current_page,
@@ -139,12 +139,12 @@ const Users = () => {
           lastPage: last_page
         });
       } else {
-        console.error('Invalid data format:', response.data);
+        // console.error('Invalid data format:', response.data);
         ToastService.error('Invalid data format received from server');
         setUsers([]);
       }
     } catch (error) {
-      console.error('Error fetching users:', error.response || error);
+      // console.error('Error fetching users:', error.response || error);
       ToastService.error(error.response?.data?.message || 'Error fetching users');
       setUsers([]);
     } finally {
@@ -159,12 +159,12 @@ const Users = () => {
       if (response.data?.status === 'success' && Array.isArray(response.data?.data)) {
         setRoles(response.data.data);
       } else {
-        console.error('Invalid roles format:', response.data);
+        // console.error('Invalid roles format:', response.data);
         ToastService.error('Invalid roles format received from server');
         setRoles([]);
       }
     } catch (error) {
-      console.error('Error fetching roles:', error.response || error);
+      // console.error('Error fetching roles:', error.response || error);
       ToastService.error('Error fetching roles');
       setRoles([]);
     }
@@ -173,16 +173,16 @@ const Users = () => {
   const fetchEntities = async () => {
     try {
       const response = await axiosInstance.get('entities');
-      console.log(response);
+      // console.log(response);
       if (response.data) {
         setEntities(response.data);
       } else {
-        console.error('Invalid entities format:', response.data);
+        // console.error('Invalid entities format:', response.data);
         ToastService.error('Invalid entities format received from server');
         setEntities([]);
       }
     } catch (error) {
-      console.error('Error fetching entities:', error.response || error);
+      // console.error('Error fetching entities:', error.response || error);
       ToastService.error('Error fetching entities');
       setEntities([]);
     }
@@ -191,17 +191,17 @@ const Users = () => {
   const fetchSuperiors = async () => {
     try {
       const response = await axiosInstance.get('listUsers');
-      console.log('count users',response.data.data);
+      // console.log('count users',response.data.data);
       if (response.data?.status === 'success' && response.data?.data) {
         setSuperiors(response.data.data);
        
       } else {
-        console.error('Invalid superiors format:', response.data);
+        // console.error('Invalid superiors format:', response.data);
         ToastService.error('Invalid superiors format received from server');
         setSuperiors([]);
       }
     } catch (error) {
-      console.error('Error fetching superiors:', error.response || error);
+      // console.error('Error fetching superiors:', error.response || error);
       ToastService.error('Error fetching superiors');
       setSuperiors([]);
     }
@@ -222,12 +222,12 @@ const Users = () => {
           }));
         }
       } else {
-        console.error('Invalid projects format:', response.data);
+        // console.error('Invalid projects format:', response.data);
         ToastService.error('Invalid projects format received from server');
         setProjects([]);
       }
     } catch (error) {
-      console.error('Error fetching projects:', error.response || error);
+      // console.error('Error fetching projects:', error.response || error);
       ToastService.error('Error fetching projects');
       setProjects([]);
     }
@@ -287,7 +287,7 @@ const Users = () => {
           document.body.style.paddingRight = '';
         });
       } catch (error) {
-        console.error('Error initializing modal:', error);
+        // console.error('Error initializing modal:', error);
       }
     };
 
@@ -373,7 +373,7 @@ const Users = () => {
       setIsCheckingSubordinates(true);
       const response = await axiosInstance.get(`check-superior/${userId}`);
       if (response.data.subordinates && response.data.subordinates.length > 0) {
-        console.log('check-superior', response);
+        // console.log('check-superior', response);
         setSubordinates(response.data.subordinates);
         // Show message about subordinates
         ToastService.info(response.data.message);
@@ -381,7 +381,7 @@ const Users = () => {
         setSubordinates([]);
       }
     } catch (error) {
-      console.error('Error checking user:', error);
+      // console.error('Error checking user:', error);
       ToastService.error('Error checking user status');
     } finally {
       setIsCheckingSubordinates(false);
@@ -497,8 +497,8 @@ const Users = () => {
     }
 
     try {
-      console.log('Selected Children before submit:', selectedChildren);
-      console.log('Selected Children IDs:', selectedChildren.map(child => child.id));
+      // console.log('Selected Children before submit:', selectedChildren);
+      // console.log('Selected Children IDs:', selectedChildren.map(child => child.id));
       
       const submitData = {
         ...formData,
@@ -513,17 +513,17 @@ const Users = () => {
         delete submitData.email;
       }
 
-      console.log('Final submit data:', submitData);
+      // console.log('Final submit data:', submitData);
 
       let response;
       if (isUpdated && userToUpdate) {
         // Update existing user
-        console.log('Updating user:', submitData);
+        // console.log('Updating user:', submitData);
         response = await axiosInstance.put(`users/${userToUpdate.id}`, submitData);
         ToastService.success('User updated successfully');
       } else {
         // Create new user
-        console.log('Creating user:', submitData);
+        // console.log('Creating user:', submitData);
         response = await axiosInstance.post('user/create', submitData);
         ToastService.success('User created successfully');
       }
@@ -533,7 +533,7 @@ const Users = () => {
         fetchUsers(pagination.current, searchTerm);
       }
     } catch (error) {
-      console.error('Error submitting form:', error);
+      //  console.error('Error submitting form:', error);
       ToastService.error(error.response?.data?.message || 'Error submitting form');
     } finally {
       setIsSubmitting(false);
@@ -644,7 +644,7 @@ const Users = () => {
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
       const importedUsers = XLSX.utils.sheet_to_json(worksheet);
-      console.log('importedUsers',importedUsers);
+      // console.log('importedUsers',importedUsers);
       
       // Get all existing matricules and their data
       const existingMatricules = new Set(superiors.map(u => normalizeMatricule(u.matricule)));
@@ -652,8 +652,8 @@ const Users = () => {
         acc[normalizeMatricule(user.matricule)] = user;
         return acc;
       }, {});
-      console.log('existingMatricules',existingMatricules);
-      console.log('existingUsersData',existingUsersData);
+      // console.log('existingMatricules',existingMatricules);
+      // console.log('existingUsersData',existingUsersData);
 
       // Split users into toCreate and toUpdate
       const toCreate = [];
@@ -673,8 +673,8 @@ const Users = () => {
         }
       });
 
-      console.log('To create:', toCreate);
-      console.log('To update:', toUpdate);
+      // console.log('To create:', toCreate);
+      // console.log('To update:', toUpdate);
 
       if (toCreate.length === 0 && toUpdate.length === 0) {
         ToastService.info('Aucun utilisateur à importer ou mettre à jour.');
@@ -703,24 +703,17 @@ const Users = () => {
              setIsImporting(false);
         }
       } catch (err) {
-        console.error('Backend import error:', err);
+        // console.error('Backend import error:', err);
         setIsImporting(false);
         ToastService.error('Erreur lors de l\'importation/mise à jour des utilisateurs.');
       }
     } catch (err) {
-      console.error('Excel parsing error:', err);
+      //  console.error('Excel parsing error:', err);
       setIsImporting(false);
       ToastService.error('Erreur lors de la lecture du fichier Excel.');
     }
 
-    console.log('=== IMPORT DATA SUMMARY ===');
-    console.log('All imported users from Excel:', importedUsers);
-    console.log('Users to create (new matricule):', toCreate);
-    console.log('Users to update (existing matricule):', toUpdate);
-    console.log('Total imported:', importedUsers.length);
-    console.log('To create:', toCreate.length);
-    console.log('To update:', toUpdate.length);
-    console.log('=== END IMPORT DATA SUMMARY ===');
+
     setIsImporting(false); // End loading
   };
 
@@ -1543,7 +1536,7 @@ const Users = () => {
         ToastService.error(response.data.message || 'Erreur lors de la suppression de l\'utilisateur');
       }
     } catch (error) {
-      console.error('Error deleting user:', error);
+      // console.error('Error deleting user:', error);
       if (error.response?.data?.subordinates) {
         setSubordinates(error.response.data.subordinates);
         ToastService.error(error.response.data.message);
@@ -1554,7 +1547,7 @@ const Users = () => {
   };
 
   const initializeUserData = (user) => {
-    console.log('Initializing user data:', user); // Debug log
+    // console.log('Initializing user data:', user); // Debug log
 
     // Set form data
     setFormData({
@@ -1583,7 +1576,7 @@ const Users = () => {
           allRoles.push(...projectRole.roles);
         }
       });
-      console.log('Found roles:', allRoles); // Debug log
+      // console.log('Found roles:', allRoles); // Debug log
       setSelectedRoles(allRoles);
     } else {
       setSelectedRoles([]);
@@ -1592,7 +1585,7 @@ const Users = () => {
     // Set selected project from projects array
     if (user.projects && user.projects.length > 0) {
       const project = user.projects[0];
-      console.log('Found project:', project); // Debug log
+      // console.log('Found project:', project); // Debug log
       setSelectedProject(project);
     } else {
       setSelectedProject(null);
@@ -1600,7 +1593,7 @@ const Users = () => {
 
     // Set superior from superior_info
     if (user.superior_info) {
-      console.log('Found superior:', user.superior_info); // Debug log
+      // console.log('Found superior:', user.superior_info); // Debug log
       setNewSuperior(user.superior_info);
     } else {
       setNewSuperior(null);
@@ -1608,7 +1601,7 @@ const Users = () => {
 
     // Set children from subordinates_info
     if (user.subordinates_info && Array.isArray(user.subordinates_info)) {
-      console.log('Found subordinates:', user.subordinates_info); // Debug log
+      // console.log('Found subordinates:', user.subordinates_info); // Debug log
       setSelectedChildren(user.subordinates_info);
     } else {
       setSelectedChildren([]);
@@ -1623,7 +1616,7 @@ const Users = () => {
     // Set update mode and user data
     setIsUpdated(true);
     setUserToUpdate(user);
-    console.log('User to update:', user); // Debug log
+    // console.log('User to update:', user); // Debug log
     // Initialize user data
     initializeUserData(user);
 

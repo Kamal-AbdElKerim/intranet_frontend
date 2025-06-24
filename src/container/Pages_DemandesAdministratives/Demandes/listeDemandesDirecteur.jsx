@@ -135,7 +135,7 @@ const ListeDemandesDirecteur = () => {
         }
       } catch (error) {
         if (!error.name === 'AbortError') {
-          console.error('Error fetching counts:', error);
+          // console.error('Error fetching counts:', error);
         }
       }
 
@@ -209,7 +209,7 @@ const ListeDemandesDirecteur = () => {
 
     } catch (error) {
       if (!error.name === 'AbortError') {
-        console.error('Error fetching data:', error);
+        // console.error('Error fetching data:', error);
         if (error.response?.status === 401) {
           ToastService.error('Veuillez vous connecter pour accéder à vos demandes');
         } else {
@@ -260,7 +260,7 @@ const ListeDemandesDirecteur = () => {
         setEntities(formattedEntities);
       }
     } catch (error) {
-      console.error('Error fetching entities:', error);
+      // console.error('Error fetching entities:', error);
       ToastService.error('Erreur lors de la récupération des entités');
     }
   }, []);
@@ -300,14 +300,13 @@ const ListeDemandesDirecteur = () => {
     try {
       const response = await axiosInstance.get('/listUsers');
       if (response.data) {
-        console.log('Users response:', response.data);
         
         // Check if response.data has a data property (common Laravel API structure)
         const usersData = response.data.data || response.data;
         
         // Ensure usersData is an array
         if (!Array.isArray(usersData)) {
-          console.error('Users data is not an array:', usersData);
+          // console.error('Users data is not an array:', usersData);
           return;
         }
 
@@ -321,7 +320,7 @@ const ListeDemandesDirecteur = () => {
         setUsers(formattedUsers);
       }
     } catch (error) {
-      console.error('Error fetching users:', error);
+      // console.error('Error fetching users:', error);
       ToastService.error('Erreur lors de la récupération des utilisateurs');
     }
   }, []);
@@ -671,7 +670,7 @@ const ListeDemandesDirecteur = () => {
         fileInputRef.current.value = '';
       }
     } catch (error) {
-      console.error('Error uploading files:', error);
+      // console.error('Error uploading files:', error);
       ToastService.error('Erreur lors du téléchargement des fichiers');
     } finally {
       setIsUploading(false);
@@ -702,7 +701,7 @@ const ListeDemandesDirecteur = () => {
         ToastService.success('Demande validée avec succès');
       }
     } catch (error) {
-      console.error('Error approving demande:', error);
+      // console.error('Error approving demande:', error);
       if (error.response?.status === 401) {
         ToastService.error('Vous n\'êtes pas autorisé à valider cette demande');
       } else {
@@ -739,7 +738,7 @@ const ListeDemandesDirecteur = () => {
         ToastService.success('Demande rejetée avec succès');
       }
     } catch (error) {
-      console.error('Error rejecting demande:', error);
+      // console.error('Error rejecting demande:', error);
       if (error.response?.status === 401) {
         ToastService.error('Vous n\'êtes pas autorisé à rejeter cette demande');
       } else {
@@ -784,7 +783,7 @@ const ListeDemandesDirecteur = () => {
         setReturnMessage('');
       }
     } catch (error) {
-      console.error('Error returning demande:', error);
+      // console.error('Error returning demande:', error);
       if (error.response?.status === 401) {
         ToastService.error('Vous n\'êtes pas autorisé à retourner cette demande');
       } else if (error.response?.status === 404) {
@@ -836,7 +835,7 @@ const ListeDemandesDirecteur = () => {
         setShowValidationModal(true);
       }
     } catch (error) {
-      console.error('Error fetching validations:', error);
+      // console.error('Error fetching validations:', error);
       ToastService.error('Erreur lors de la récupération des validations');
     } finally {
       setIsLoadingValidations(false);
@@ -993,7 +992,7 @@ const ListeDemandesDirecteur = () => {
         ToastService.success('Export Excel réussi');
       }
     } catch (error) {
-      console.error('Export error:', error);
+      // console.error('Export error:', error);
       ToastService.error('Erreur lors de l\'export Excel');
     } finally {
       setShowExportDropdown(false);

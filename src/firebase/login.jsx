@@ -117,7 +117,7 @@ const Login = ({ ThemeChanger }) => {
     };
     
     const routeChange = () => {
-        const path = `${import.meta.env.BASE_URL}Home`;
+        const path = `${import.meta.env.BASE_URL}DemandesAdministratives/dashboards`;
         navigate(path);
     };
 
@@ -219,15 +219,12 @@ const Login = ({ ThemeChanger }) => {
                         
                         routeChange();
                     } else {
-                        console.log('Login failed: No access token in response');
                         setErrors({ submit: "Token d'accès manquant" });
                     }
                 } else {
-                    console.log('Login failed: Invalid response structure');
                     setErrors({ submit: "Format de réponse invalide" });
                 }
             } else {
-                console.log('Login failed: No response data');
                 setErrors({ submit: "Pas de données reçues" });
             }
         } catch (err) {
@@ -310,7 +307,7 @@ const Login = ({ ThemeChanger }) => {
     };
 
     const handleLoginSuccess = (response) => {
-        console.log("Office 365 login successful", response.account.username);
+        // console.log("Office 365 login successful", response.account.username);
         login(null, response.account.username);
         // Clear Microsoft session after successful login
         msalInstance.logoutPopup().catch(console.error);
@@ -961,7 +958,7 @@ const Login = ({ ThemeChanger }) => {
                 </div>
             </div>
 
-            <style jsx="true">{`
+            <style>{`
                 @keyframes fade-in {
                     from {
                         opacity: 0;

@@ -36,13 +36,13 @@ export const AuthProvider = ({ children }) => {
                 setUser(userData);
                 localStorage.setItem('user_data', JSON.stringify(userData));
             } else {
-                console.error('Invalid profile response format:', profileResponse);
+                // console.error('Invalid profile response format:', profileResponse);
                 throw new Error('Invalid profile response format');
             }
         } catch (profileError) {
-            console.error('Error fetching profile:', profileError);
+            // console.error('Error fetching profile:', profileError);
             if (profileError.response) {
-                console.error('Error response:', profileError.response);
+                // console.error('Error response:', profileError.response);
                 // If unauthorized or forbidden, clear everything
                 if (profileError.response.status === 401 || profileError.response.status === 403) {
                     localStorage.removeItem('access_token');
@@ -71,7 +71,7 @@ export const AuthProvider = ({ children }) => {
                     
                         setUser(parsedUser);
                     } catch (error) {
-                        console.error('Error parsing saved user data:', error);
+                        // console.error('Error parsing saved user data:', error);
                         localStorage.removeItem('user_data');
                     }
                 }
@@ -139,7 +139,7 @@ export const AuthProvider = ({ children }) => {
             }
             return false;
         } catch (error) {
-            console.error('Error in loginAuth:', error);
+            // console.error('Error in loginAuth:', error);
             return false;
         }
     };

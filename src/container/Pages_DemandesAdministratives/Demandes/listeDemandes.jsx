@@ -90,8 +90,7 @@ QuillEditor.displayName = 'QuillEditor';
 
 const ListeDemandes = () => {
   const { user } = useAuth();
-  console.log('ListeDemandes - Current user data:', user);
-  console.log('ListeDemandes - Entity value:', user?.data?.entity);
+
 
   const [demandes, setDemandes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -202,12 +201,10 @@ const ListeDemandes = () => {
   const fetchDemandeFiles = async (demandeId) => {
     try {
       setLoadingFiles(true);
-      console.log('Fetching files for demand:', demandeId);
       const response = await axiosInstance.get(`/demandes/${demandeId}/files`);
-      console.log('Files response:', response.data);
       setFiles(response.data.data || []);
     } catch (error) {
-      console.error('Error fetching files:', error);
+      // console.error('Error fetching files:', error);
       ToastService.error('Erreur lors du chargement des fichiers');
     } finally {
       setLoadingFiles(false);
@@ -229,7 +226,7 @@ const ListeDemandes = () => {
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error downloading file:', error);
+      // console.error('Error downloading file:', error);
       ToastService.error('Erreur lors du téléchargement du fichier');
     }
   };
@@ -676,7 +673,7 @@ const ListeDemandes = () => {
         }
       }
     } catch (error) {
-      console.error('Error fetching demandes:', error);
+      // console.error('Error fetching demandes:', error);
       if (error.response?.status === 401) {
         ToastService.error('Veuillez vous connecter pour accéder à vos demandes');
       } else {
@@ -954,24 +951,22 @@ const ListeDemandes = () => {
 
   const checkCanAction = async (demandeId) => {
     try {
-      console.log('Checking action permissions for demande:', demandeId);
-      console.log('Current demandeType:', demandeType);
+   
       
       setLoadingVerification(prev => ({ ...prev, [demandeId]: true }));
 
       const response = await axiosInstance.get(`/canAction/${demandeId}`);
-      console.log('canAction API response:', response.data);
+   
 
       const permissions = {
         canEdit: response.data,
         canDelete: response.data
       };
-      console.log('Setting permissions:', permissions);
 
       return permissions;
     } catch (error) {
-      console.error('Error checking action permissions:', error);
-      console.error('Error details:', error.response?.data);
+      // console.error('Error checking action permissions:', error);
+      // console.error('Error details:', error.response?.data);
       return { canEdit: false, canDelete: false };
     } finally {
       setTimeout(() => {
@@ -983,7 +978,6 @@ const ListeDemandes = () => {
   // Modify handleEdit to check permissions first
   const handleEdit = async (id) => {
     const permissions = await checkCanAction(id);
-    console.log(permissions);
     if (!permissions.canEdit) {
       ToastService.info("Je ne peux pas effectuer cette opération pour le moment, car votre demande est en cours de traitement");
       return;
@@ -1068,7 +1062,6 @@ const ListeDemandes = () => {
   // Modify handleDelete to check permissions first
   const handleDelete = async (id) => {
     const permissions = await checkCanAction(id);
-    console.log(permissions);
     
     if (!permissions.canDelete) {
       ToastService.info("Je ne peux pas effectuer cette opération pour le moment, car votre demande est en cours de traitement");
@@ -1091,8 +1084,11 @@ const ListeDemandes = () => {
   // Add useEffect to initialize modals when component mounts
   useEffect(() => {
     const initModal = async () => {
-      const { HSOverlay } = await import('preline');
-      HSOverlay.init();
+      const preline = await import('preline');
+      const HSOverlay = preline.HSOverlay || preline.default?.HSOverlay;
+      if (HSOverlay && typeof HSOverlay.init === 'function') {
+        HSOverlay.init();
+      }
 
       // Add event listeners for modal events
       document.addEventListener('open.hs.overlay', () => {
@@ -1138,7 +1134,7 @@ const ListeDemandes = () => {
       await fetchDemandes();
       
     } catch (error) {
-      console.error('Error deleting demande:', error);
+      // console.error('Error deleting demande:', error);
       if (error.response?.status === 401) {
         ToastService.error('Veuillez vous connecter pour supprimer une demande');
       } else if (error.response?.status === 404) {
@@ -1165,8 +1161,11 @@ const ListeDemandes = () => {
   // Add useEffect for modal scroll management
   useEffect(() => {
     const initModal = async () => {
-      const { HSOverlay } = await import('preline');
-      HSOverlay.init();
+      const preline = await import('preline');
+      const HSOverlay = preline.HSOverlay || preline.default?.HSOverlay;
+      if (HSOverlay && typeof HSOverlay.init === 'function') {
+        HSOverlay.init();
+      }
 
       // Add event listeners for modal events
       document.addEventListener('open.hs.overlay', () => {
@@ -1194,16 +1193,18 @@ const ListeDemandes = () => {
   const closeModal = () => {
     const modal = document.querySelector('#hs-add-demande-modal');
     if (modal) {
-      const backdrop = document.querySelector('.hs-overlay-backdrop');
-      if (backdrop) {
-        backdrop.remove();
+      const HSOverlay = window.HSOverlay;
+      if (HSOverlay) {
+        HSOverlay.close(modal);
+      } else {
+        // fallback: remove classes and backdrop if HSOverlay is not available
+        const backdrop = document.querySelector('.hs-overlay-backdrop');
+        if (backdrop) backdrop.remove();
+        modal.classList.remove('hs-overlay-open');
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
       }
-      modal.classList.remove('hs-overlay-open');
-      modal.classList.add('hidden');
-
-      // Restore scroll
-      document.body.style.overflow = '';
-      document.body.style.paddingRight = '';
     }
   };
 
@@ -1309,7 +1310,7 @@ const ListeDemandes = () => {
       }
     } catch (error) {
       setShowLoading(false);
-      console.error('Error submitting demande:', error);
+      // console.error('Error submitting demande:', error);
       
       // Handle specific error cases
       if (error.code === 'ECONNABORTED') {
@@ -1389,7 +1390,7 @@ const ListeDemandes = () => {
         const { HSOverlay } = await import('preline');
         HSOverlay.init();
       } catch (error) {
-        console.error('Error initializing modals:', error);
+        // console.error('Error initializing modals:', error);
       }
     };
 
@@ -1439,11 +1440,10 @@ const ListeDemandes = () => {
           const date = new Date(holiday.date);
           return format(date, 'yyyy-MM-dd');
         });
-        console.log('Fetched holidays:', holidayDates); // Debug log
         setHolidays(holidayDates);
       }
     } catch (error) {
-      console.error('Error fetching holidays:', error);
+      // console.error('Error fetching holidays:', error);
     }
   };
 
@@ -1457,7 +1457,6 @@ const ListeDemandes = () => {
     const date = dateString instanceof Date ? dateString : new Date(dateString);
     // Format to yyyy-MM-dd for consistent comparison
     const formattedDate = format(date, 'yyyy-MM-dd');
-    console.log('Checking holiday:', formattedDate, 'Holidays:', holidays); // Debug log
     return holidays.includes(formattedDate);
   }, [holidays]);
 
@@ -1626,7 +1625,7 @@ const ListeDemandes = () => {
       }
     } catch (error) {
       setShowLoading(false);
-      console.error('Error updating demande:', error);
+      // console.error('Error updating demande:', error);
       if (error.response?.data?.errors) {
         setErrors(error.response.data.errors);
         ToastService.error('Veuillez corriger les erreurs dans le formulaire');
@@ -1831,6 +1830,7 @@ const ListeDemandes = () => {
 
   // Add this function with your other functions
   const handleShowValidations = async (demandeId, e) => {
+   
     if (e) {
       e.preventDefault();
       e.stopPropagation();
@@ -1838,19 +1838,18 @@ const ListeDemandes = () => {
 
     // Show loading first
     setIsLoadingValidations(true);
-    document.body.style.overflow = 'hidden'; // Prevent scrolling while loading
+    document.body.style.overflow = 'hidden';
 
     try {
       const response = await axiosInstance.get(`/ALLValidationsParMYDemande/${demandeId}`);
-      console.log('Validation response:', response.data); // Debug log
       if (response.data) {
         // Wait for loading animation
-        await new Promise(resolve => setTimeout(resolve, 800));
+        // await new Promise(resolve => setTimeout(resolve, 800));
         setSelectedValidations(response.data);
         setShowValidationModal(true);
       }
     } catch (error) {
-      console.error('Error fetching validations:', error);
+      // console.error('Error fetching validations:', error);
       ToastService.error('Erreur lors de la récupération des validations');
     } finally {
       setIsLoadingValidations(false);
@@ -1899,11 +1898,10 @@ const ListeDemandes = () => {
         try {
           const response = await axiosInstance.get('/ouvriers');
           if (response.data?.data) {
-            console.log('Ouvriers:', response.data.data);
             setOuvriers(response.data.data);
           }
         } catch (error) {
-          console.error('Error fetching ouvriers:', error);
+          // console.error('Error fetching ouvriers:', error);
           ToastService.error('Erreur lors de la récupération des ouvriers');
         }
       }
@@ -2121,7 +2119,7 @@ const ListeDemandes = () => {
       
       ToastService.success('Fichier supprimé avec succès');
     } catch (error) {
-      console.error('Error deleting file:', error);
+      // console.error('Error deleting file:', error);
       ToastService.error('Erreur lors de la suppression du fichier');
     }
   };
@@ -2658,7 +2656,7 @@ const ListeDemandes = () => {
               </div>
             )}
 
-            <style jsx>{`
+            <style>{`
               @media (max-width: 640px) {
                 .ti-modal-box {
                   margin: 0 !important;
@@ -4055,11 +4053,10 @@ const ListeDemandes = () => {
                     className="ti-btn ti-btn-info !font-medium !rounded-full px-6 py-2.5 transition-all duration-300"
                     onClick={() => {
                       if (!demandeToEdit?.id) {
-                        console.error('No demand selected');
+                        // console.error('No demand selected');
                         ToastService.error('Erreur: Aucune demande sélectionnée');
                         return;
                       }
-                      console.log('Opening files modal for demand:', demandeToEdit);
                       fetchDemandeFiles(demandeToEdit.id);
                       const editModal = document.querySelector('#hs-edit-demande-modal');
                       const filesModal = document.querySelector('#hs-edit-files-modal');
@@ -4317,7 +4314,7 @@ const ListeDemandes = () => {
                         // Reset the input
                         e.target.value = '';
                       } catch (error) {
-                        console.error('Error uploading files:', error);
+                        // console.error('Error uploading files:', error);
                         ToastService.error('Erreur lors de l\'ajout des fichiers');
                       } finally {
                         setLoadingFiles(false);

@@ -237,7 +237,7 @@ function handleTypeChange(inst, oldVal, newVal) {
           }
         })
         .catch((error) => {
-          console.error(`Failed to load icon: ${state.currentName + "\n"}${error}`); //eslint-disable-line
+          // console.error(`Failed to load icon: ${state.currentName + "\n"}${error}`); //eslint-disable-line
         });}
 }
 function handleNameChange(inst, oldVal, newVal) {
@@ -257,7 +257,7 @@ function handleNameChange(inst, oldVal, newVal) {
           }
         })
         .catch((error) => {
-          console.error(`Failed to load icon: ${newVal + "\n"}${error}`); //eslint-disable-line
+          // console.error(`Failed to load icon: ${newVal + "\n"}${error}`); //eslint-disable-line
         });}
   }
 }

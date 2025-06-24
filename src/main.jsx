@@ -36,7 +36,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 
               {/* Protected Routes (Dashboard and other pages) */}
               <Route element={<PrivateRoute />}>
-                <Route path="Home" element={<Home />} />
+                {/* <Route path="Home" element={<Home />} /> */}
                 <Route element={<App />}>
                   <Route path="DemandesAdministratives/dashboards" element={<Crm />} />
                   <Route path="DemandesAdministratives/listeDemandes" element={<ListeDemandes />} />

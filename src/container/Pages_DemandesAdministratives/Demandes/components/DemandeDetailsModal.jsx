@@ -151,10 +151,9 @@ const DemandeDetailsModal = ({ selectedDemande }) => {
     try {
       setLoading(true);
       const response = await axiosInstance.get(`/demandes/${selectedDemande.id}/files`);
-      console.log('Files response modal:', response.data);
       setFiles(response.data.data || []);
     } catch (error) {
-      console.error('Error fetching files:', error);
+      // console.error('Error fetching files:', error);
     } finally {
       setLoading(false);
     }
@@ -175,7 +174,7 @@ const DemandeDetailsModal = ({ selectedDemande }) => {
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error downloading file:', error);
+      // console.error('Error downloading file:', error);
     }
   };
 
@@ -201,7 +200,7 @@ const DemandeDetailsModal = ({ selectedDemande }) => {
         const { HSOverlay } = await import('preline');
         HSOverlay.init();
       } catch (error) {
-        console.error('Error initializing modals:', error);
+        // console.error('Error initializing modals:', error);
       }
     };
     
@@ -540,7 +539,7 @@ const DemandeDetailsModal = ({ selectedDemande }) => {
 
       {/* Main View Modal */}
       <div id="hs-view-demande-modal" className="hs-overlay hidden ti-modal">
-        <style jsx>{`
+        <style>{`
           /* Custom scrollbar styles */
           .custom-scrollbar::-webkit-scrollbar {
             width: 8px;
@@ -711,21 +710,21 @@ const DemandeDetailsModal = ({ selectedDemande }) => {
                             const maxDays = getMaxDaysForSpecialLeave(selectedDemande.nature_conge);
                             const requestedDays = parseInt(selectedDemande.duree) || 0;
                             
-                            console.log('DemandeDetailsModal - Special leave validation:', {
-                              type: selectedDemande.type_conge,
-                              nature: selectedDemande.nature_conge,
-                              maxDays: maxDays,
-                              requestedDays: requestedDays,
-                              duree: selectedDemande.duree,
-                              shouldShowWarning: maxDays && requestedDays > maxDays,
-                              condition1: selectedDemande.type_conge === "Congé spécial",
-                              condition2: selectedDemande.nature_conge,
-                              condition3: maxDays,
-                              condition4: requestedDays > maxDays
-                            });
+                            // console.log('DemandeDetailsModal - Special leave validation:', {
+                            //   type: selectedDemande.type_conge,
+                            //   nature: selectedDemande.nature_conge,
+                            //   maxDays: maxDays,
+                            //   requestedDays: requestedDays,
+                            //   duree: selectedDemande.duree,
+                            //   shouldShowWarning: maxDays && requestedDays > maxDays,
+                            //   condition1: selectedDemande.type_conge === "Congé spécial",
+                            //   condition2: selectedDemande.nature_conge,
+                            //   condition3: maxDays,
+                            //   condition4: requestedDays > maxDays
+                            // });
                             
                             if (maxDays && requestedDays > maxDays) {
-                              console.log('DemandeDetailsModal - Showing special leave warning');
+                              // console.log('DemandeDetailsModal - Showing special leave warning');
                               return (
                                 <div className={isDarkMode ? 'warning-message-dark' : 'warning-message'}>
                                   <div className="flex items-center gap-2">
@@ -737,7 +736,7 @@ const DemandeDetailsModal = ({ selectedDemande }) => {
                                 </div>
                               );
                             }
-                            console.log('DemandeDetailsModal - Not showing special leave warning');
+                            // console.log('DemandeDetailsModal - Not showing special leave warning');
                             return null;
                           })()}
                           {/* Warning message when solde is insufficient (only for non-special leave types and not Congé sans solde) */}

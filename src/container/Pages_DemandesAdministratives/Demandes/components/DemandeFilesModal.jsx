@@ -18,7 +18,7 @@ const DemandeFilesModal = ({ demande, onClose }) => {
       const response = await axiosInstance.get(`/filesParAdmin/${demande.id}/files`);
       setFiles(response.data.data || []);
     } catch (error) {
-      console.error('Error fetching files:', error);
+      // console.error('Error fetching files:', error);
       ToastService.error('Erreur lors du chargement des fichiers');
     } finally {
       setLoading(false);
@@ -40,7 +40,7 @@ const DemandeFilesModal = ({ demande, onClose }) => {
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error downloading file:', error);
+      // console.error('Error downloading file:', error);
       ToastService.error('Erreur lors du téléchargement du fichier');
     }
   };
@@ -52,7 +52,7 @@ const DemandeFilesModal = ({ demande, onClose }) => {
         const { HSOverlay } = await import('preline');
         HSOverlay.init();
       } catch (error) {
-        console.error('Error initializing modals:', error);
+        // console.error('Error initializing modals:', error);
       }
     };
     

@@ -50,7 +50,7 @@ const Home = () => {
 
         setDashboardData(dashboardResponse.data.data.total_users);
       } catch (error) {
-        console.error('Error fetching dashboard data:', error);
+        // console.error('Error fetching dashboard data:', error);
       } finally {
       }
     };

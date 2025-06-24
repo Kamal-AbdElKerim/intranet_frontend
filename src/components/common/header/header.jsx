@@ -23,9 +23,7 @@ const Header = ({ local_varaiable, ThemeChanger }) => {
     return user?.data?.roles?.some(role => role.name === "Admin RH");
   };
 
-useEffect(() => {
-  console.log('User:', user);
-}, [user]);
+
 
   const toggleFullScreen = () => {
     const elem = document.documentElement;
@@ -278,14 +276,14 @@ useEffect(() => {
         }).then(() => {
           navigate(`${import.meta.env.BASE_URL}`);
         }).catch((error) => {
-          console.error('MSAL logout error:', error);
+          // console.error('MSAL logout error:', error);
           navigate(`${import.meta.env.BASE_URL}`);
         });
       } else {
         navigate(`${import.meta.env.BASE_URL}`);
       }
     } catch (error) {
-      console.error('Logout error:', error);
+      // console.error('Logout error:', error);
       localStorage.removeItem('msal_token');
       localStorage.removeItem('access_token');
       navigate(`${import.meta.env.BASE_URL}`);
@@ -326,7 +324,7 @@ useEffect(() => {
             <div className="header-content-right">
 
                   {/* Home Button */}
-                  <div className="header-element header-home hidden !items-center sm:block !py-[1rem] md:!px-[0.65rem] px-2">
+                  {/* <div className="header-element header-home hidden !items-center sm:block !py-[1rem] md:!px-[0.65rem] px-2">
                 <Link
                   to={`Home`}
                   className="hs-dropdown-toggle inline-flex items-center gap-2 rounded-full font-medium transition-all text-xs"
@@ -334,7 +332,7 @@ useEffect(() => {
                 >
                   <i className="ti ti-home-2 text-[1.25rem] text-primary hover:text-primary/80 transition-colors duration-200"></i>
                 </Link>
-              </div>
+              </div> */}
 
               {/* Only show Holidays button for Admin RH */}
               {isAdminRH() && (

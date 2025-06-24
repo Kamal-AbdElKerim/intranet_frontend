@@ -64,7 +64,7 @@ const LoadingLogo = ({ logo, size = 20 }) => {
                 </div>
             </div>
 
-            <style jsx="true">{`
+            <style>{`
                 @keyframes gradient-shift {
                     0% {
                         background-position: 0% 50%;

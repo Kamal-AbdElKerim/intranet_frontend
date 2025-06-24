@@ -133,7 +133,7 @@ const Holidays = ({ onClose }) => {
       }
     } catch (error) {
       ToastService.error('Failed to fetch holidays. Please try again.');
-      console.error('Error fetching holidays:', error);
+      // console.error('Error fetching holidays:', error);
     } finally {
       setLoading(false);
     }
@@ -169,7 +169,7 @@ const Holidays = ({ onClose }) => {
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Échec de l\'enregistrement des vacances. Veuillez réessayer.';
       ToastService.error(errorMessage);
-      console.error('Error saving holiday:', error);
+      // console.error('Error saving holiday:', error);
     } finally {
       setActionLoading({ ...actionLoading, save: false });
     }
@@ -190,7 +190,7 @@ const Holidays = ({ onClose }) => {
       fetchHolidays();
     } catch (error) {
       ToastService.error('Failed to delete holiday. Please try again.');
-      console.error('Error deleting holiday:', error);
+      // console.error('Error deleting holiday:', error);
     } finally {
       setActionLoading({ ...actionLoading, delete: null });
     }
@@ -235,7 +235,7 @@ const Holidays = ({ onClose }) => {
       fetchHolidays();
     } catch (error) {
       ToastService.error('Échec de la duplication des vacances. Veuillez réessayer.');
-      console.error('Error duplicating holidays:', error);
+      // console.error('Error duplicating holidays:', error);
     } finally {
       setActionLoading(prev => ({ ...prev, duplicate: null }));
     }

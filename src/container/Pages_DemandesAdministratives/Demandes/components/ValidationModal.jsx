@@ -103,7 +103,7 @@ const ValidationModal = ({ isOpen, onClose, validations = [] }) => {
                 animation: 'modalShow 0.3s ease-out'
               }}
             >
-              <style jsx>{`
+              <style>{`
                 @keyframes modalShow {
                   from {
                     opacity: 0;
@@ -276,10 +276,6 @@ ValidationModal.propTypes = {
       role: PropTypes.string,
     })
   ),
-};
-
-ValidationModal.defaultProps = {
-  validations: [],
 };
 
 export default ValidationModal;

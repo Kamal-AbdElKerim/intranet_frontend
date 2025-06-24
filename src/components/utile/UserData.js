@@ -4,7 +4,7 @@ export const getUserData = () => {
         const userData = localStorage.getItem('user_data');
         return userData ? JSON.parse(userData) : null;
     } catch (error) {
-        console.error('Error parsing user data:', error);
+        // console.error('Error parsing user data:', error);
         return null;
     }
 };
@@ -40,7 +40,7 @@ export const updateUserData = (newData) => {
         localStorage.setItem('user_data', JSON.stringify(updatedData));
         return true;
     } catch (error) {
-        console.error('Error updating user data:', error);
+        // console.error('Error updating user data:', error);
         return false;
     }
 }; 

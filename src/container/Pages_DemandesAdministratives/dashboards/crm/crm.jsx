@@ -213,17 +213,15 @@ const Crm = () => {
   };
 
   useEffect(() => {
-    console.log('user', user);
     const fetchDashboardData = async () => {
       setIsLoading(true);
-      console.log('showAllData', showAllData);
       try {
         const dashboardResponse = await axiosInstance.get(`/dashboard/${selectedYear}/${showAllData}`);
         setDashboardData(dashboardResponse.data.data);
         setUsersWithDemandes(dashboardResponse.data.data.users.userswithCount);
-        console.log('usersWithDemandes', dashboardResponse.data.data);
+        // console.log('usersWithDemandes', dashboardResponse.data.data);
       } catch (error) {
-        console.error('Error fetching dashboard data:', error);
+        // console.error('Error fetching dashboard data:', error);
       } finally {
         setIsLoading(false);
       }
@@ -1178,7 +1176,7 @@ const Crm = () => {
               {/* Solde Card */}
               <div className="box hrm-main-card warning w-full flex flex-col justify-between hover:shadow-lg hover:shadow-warning/20 transition-all duration-500 ease-out">
                 <div className="box-body flex flex-col justify-between h-full">
-                  <div className="flex items-center gap-4 mb-4">
+                  <div className="flex  gap-4 mb-4">
                     <span className="avatar bg-warning !text-white text-2xl transition-transform duration-300 hover:rotate-12">
                       <i className="ri-wallet-3-line"></i>
                     </span>
@@ -1188,15 +1186,15 @@ const Crm = () => {
                         <div className="flex flex-col items-start gap-2">
                           <div className="flex items-center gap-2">
                             <i className="ri-information-line text-warning text-xl"></i>
-                            <span className="text-base font-medium text-gray-700 dark:text-gray-300">Allez dans</span>
+                            <span className="text-base font-medium text-gray-700 dark:text-gray-300 text-center">Allez dans</span>
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="text-sm font-bold text-primary bg-primary/10 px-3 py-1 rounded-lg border border-primary/20">
                               Données personnelles
                             </span>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-base font-medium text-gray-700 dark:text-gray-300">pour voir le solde</span>
+                          <div className="flex items-center gap-2 text-center">
+                            <span className="text-base font-medium text-gray-700 dark:text-gray-300 text-center">pour voir le solde</span>
                           </div>
                         </div>
                       ) : (
@@ -1237,9 +1235,11 @@ const Crm = () => {
                     </div>
                     <div className="flex-grow">
                       <span className="font-semibold text-[#8c9097] dark:text-white/50 block mb-1">Jours Fériés</span>
-                      <h5 className="font-semibold mb-1 text-[1.25rem]">{upcomingHolidays.length}</h5>
+                      <h5 className="font-semibold mb-1 text-[1.25rem]">{dashboardData?.holidays?.holidays_count ?? 0}</h5>
                       <p className="mb-0">
-                        <span className="badge bg-info/10 text-info">Jours à venir</span>
+                        <span className="badge bg-info/10 text-info">
+                          {selectedYear === 'all' ? 'Toutes les années' : 'Cette année'}
+                        </span>
                       </p>
                     </div>
                   </div>

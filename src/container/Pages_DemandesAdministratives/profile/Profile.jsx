@@ -4,7 +4,6 @@ import { useAuth } from '../../../components/utile/AuthProvider';
 
 const Profile = () => {
     const { user } = useAuth();
-    console.log('Profile - Current user data:', user);
 
     // Custom CSS styles for avatar
     const avatarStyles = {

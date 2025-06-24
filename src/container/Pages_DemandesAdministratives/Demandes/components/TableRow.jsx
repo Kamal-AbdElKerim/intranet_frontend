@@ -147,16 +147,7 @@ function TableRow({
             {status}
           </span>
           <button
-            onClick={(e) => handleShowValidations(
-              status === 'En attente' 
-                ? demande.id 
-                : status === 'Traité'
-                  ? demande.id
-                  : status === 'Refusé'
-                    ? demande.id
-                    : item.demande_id, 
-              e
-            )}
+            onClick={(e) => handleShowValidations(demande.id , e)}
             type="button"
             className="ti-btn !p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
             title="Voir les validations"
