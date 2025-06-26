@@ -6,6 +6,9 @@ import '../../../styles/table.css';
 import '../../../styles/error.css';
 import axiosInstance from '../../../Interceptor/axiosInstance';
 import { ToastContainer } from 'react-toastify';
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 // Custom styles for range slider and select
 const rangeSliderStyles = `
@@ -158,6 +161,8 @@ const Objectifs = () => {
   const [objectifToUpdate, setObjectifToUpdate] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [objectifToDelete, setObjectifToDelete] = useState(null);
+  const [exportingExcel, setExportingExcel] = useState(false);
+  const [exportingPDF, setExportingPDF] = useState(false);
 
   // Fetch objectifs
   const fetchObjectifs = async (page = 1, search = '', status = '', year = '') => {
@@ -420,57 +425,170 @@ const Objectifs = () => {
   // Export functions
   const handleExportExcel = async () => {
     try {
+      setExportingExcel(true);
+      
+      // Fetch ALL filtered data for export (not just current page)
       const queryParams = new URLSearchParams({
+        page: 1,
+        per_page: 10000, // Large number to get all data
         search: searchTerm || '',
+        sort_key: sortConfig.key || '',
+        sort_direction: sortConfig.direction || 'desc',
         status: statusFilter || '',
         year: yearFilter || '',
-        export: 'excel'
+        export: 'true' // Flag to indicate this is for export
       }).toString();
       
-      const response = await axiosInstance.get(`/pmo/objectifs/export?${queryParams}`, {
-        responseType: 'blob'
-      });
+      const response = await axiosInstance.get(`/pmo/objectifs?${queryParams}`);
       
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `objectifs_${new Date().toISOString().split('T')[0]}.xlsx`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
+      if (response.data?.status !== 'success' || !response.data?.data?.data) {
+        throw new Error('Erreur lors de la récupération des données');
+      }
       
-      ToastService.success('Export Excel réussi');
+      const allObjectifs = response.data.data.data;
+      
+      // Create Excel data from ALL filtered objectifs - simple table format
+      const excelData = allObjectifs.map(objectif => ({
+        'Titre': objectif.titre || '',
+        'Entité': objectif.entite?.company_name || '',
+        'Date début': formatDate(objectif.date_debut) || '',
+        'Date fin': formatDate(objectif.date_fin) || '',
+        'Poids': objectif.poids || '',
+        'Statut': statusOptions.find(opt => opt.value === objectif.status)?.label || objectif.status || '',
+        'Observation': objectif.observation || ''
+      }));
+
+      // Create workbook and worksheet with headers
+      const workbook = XLSX.utils.book_new();
+      const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+      // Set column widths
+      const columnWidths = [
+        { wch: 35 }, // Titre
+        { wch: 25 }, // Entité
+        { wch: 20 }, // Date début
+        { wch: 20 }, // Date fin
+        { wch: 10 }, // Poids
+        { wch: 15 }, // Statut
+        { wch: 40 }  // Observation
+      ];
+      worksheet['!cols'] = columnWidths;
+
+      // Add worksheet to workbook
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Objectifs');
+
+      // Generate filename with filters
+      let filename = 'objectifs';
+      if (statusFilter) filename += `_${statusFilter}`;
+      if (yearFilter) filename += `_${yearFilter}`;
+      if (searchTerm) filename += `_recherche`;
+      filename += `_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+      // Save file
+      XLSX.writeFile(workbook, filename);
+      
+      ToastService.success(`Export Excel réussi: ${allObjectifs.length} objectifs exportés`);
     } catch (error) {
-      ToastService.error('Erreur lors de l\'export Excel');
+      console.error('Export Excel error:', error);
+      ToastService.error('Erreur lors de l\'export Excel: ' + (error.message || 'Erreur inconnue'));
+    } finally {
+      setExportingExcel(false);
     }
   };
 
   const handleExportPDF = async () => {
     try {
+      setExportingPDF(true);
+      
+      // Fetch ALL filtered data for export (not just current page)
       const queryParams = new URLSearchParams({
+        page: 1,
+        per_page: 10000, // Large number to get all data
         search: searchTerm || '',
+        sort_key: sortConfig.key || '',
+        sort_direction: sortConfig.direction || 'desc',
         status: statusFilter || '',
         year: yearFilter || '',
-        export: 'pdf'
+        export: 'true' // Flag to indicate this is for export
       }).toString();
       
-      const response = await axiosInstance.get(`/pmo/objectifs/export?${queryParams}`, {
-        responseType: 'blob'
+      const response = await axiosInstance.get(`/pmo/objectifs?${queryParams}`);
+      
+      if (response.data?.status !== 'success' || !response.data?.data?.data) {
+        throw new Error('Erreur lors de la récupération des données');
+      }
+      
+      const allObjectifs = response.data.data.data;
+      
+      const doc = new jsPDF();
+      
+      // Add title
+      doc.setFontSize(16);
+      doc.setTextColor(59, 130, 246); // Blue color
+      doc.text('Objectifs', 14, 22);
+      
+      // Prepare table data - simple format like Excel
+      const tableData = allObjectifs.map(objectif => [
+        objectif.titre || '-',
+        objectif.entite?.company_name || '-',
+        formatDate(objectif.date_debut) || '-',
+        formatDate(objectif.date_fin) || '-',
+        objectif.poids || '-',
+        statusOptions.find(opt => opt.value === objectif.status)?.label || objectif.status || '-',
+        objectif.observation || '-'
+      ]);
+      
+      // Add table with simple styling
+      autoTable(doc, {
+        head: [['Titre', 'Entité', 'Date début', 'Date fin', 'Poids', 'Statut', 'Observation']],
+        body: tableData,
+        startY: 30,
+        styles: {
+          fontSize: 9,
+          cellPadding: 3,
+        },
+        headStyles: {
+          fillColor: [59, 130, 246],
+          textColor: 255,
+          fontStyle: 'bold',
+        },
+        columnStyles: {
+          0: { cellWidth: 40 }, // Titre
+          1: { cellWidth: 30 }, // Entité
+          2: { cellWidth: 25 }, // Date début
+          3: { cellWidth: 25 }, // Date fin
+          4: { cellWidth: 15 }, // Poids
+          5: { cellWidth: 20 }, // Statut
+          6: { cellWidth: 30 }, // Observation
+        },
+        didDrawPage: function (data) {
+          // Add page number
+          doc.setFontSize(10);
+          doc.setTextColor(107, 114, 128);
+          doc.text(
+            `Page ${doc.internal.getNumberOfPages()}`,
+            data.settings.margin.left,
+            doc.internal.pageSize.height - 10
+          );
+        }
       });
       
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `objectifs_${new Date().toISOString().split('T')[0]}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
+      // Generate filename with filters
+      let filename = 'objectifs';
+      if (statusFilter) filename += `_${statusFilter}`;
+      if (yearFilter) filename += `_${yearFilter}`;
+      if (searchTerm) filename += `_recherche`;
+      filename += `_${new Date().toISOString().split('T')[0]}.pdf`;
       
-      ToastService.success('Export PDF réussi');
+      // Save file
+      doc.save(filename);
+      
+      ToastService.success(`Export PDF réussi: ${allObjectifs.length} objectifs exportés`);
     } catch (error) {
-      ToastService.error('Erreur lors de l\'export PDF');
+      console.error('Export PDF error:', error);
+      ToastService.error('Erreur lors de l\'export PDF: ' + (error.message || 'Erreur inconnue'));
+    } finally {
+      setExportingPDF(false);
     }
   };
 
@@ -602,24 +720,61 @@ const Objectifs = () => {
                       {/* Excel Export Button */}
                       <button
                         onClick={handleExportExcel}
-                        disabled={loading || objectifs.length === 0}
-                        className="flex items-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 text-white rounded-lg font-medium text-sm transition-all duration-200 shadow-sm hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 group"
+                        disabled={loading || objectifs.length === 0 || exportingExcel}
+                        className="relative flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 disabled:from-emerald-300 disabled:to-emerald-400 text-white rounded-xl font-semibold text-sm transition-all duration-300 shadow-lg hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50 group overflow-hidden"
                         title="Exporter vers Excel"
                       >
-                        <i className="ri-file-excel-2-line text-lg group-hover:scale-110 transition-transform"></i>
-                        <span>Excel</span>
+                        {/* Loading spinner */}
+                        {exportingExcel && (
+                          <div className="absolute inset-0 bg-emerald-600/80 flex items-center justify-center rounded-xl">
+                            <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                          </div>
+                        )}
+                        
+                        {/* Button content */}
+                        <div className="flex items-center gap-2">
+                          <i className={`ri-file-excel-2-line text-lg transition-transform ${exportingExcel ? 'animate-pulse' : 'group-hover:scale-110'}`}></i>
+                          <span>{exportingExcel ? 'Export...' : 'Excel'}</span>
+                        </div>
+                        
+                        {/* Shine effect */}
+                        <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:translate-x-full transition-transform duration-1000"></div>
                       </button>
                       
                       {/* PDF Export Button */}
                       <button
                         onClick={handleExportPDF}
-                        disabled={loading || objectifs.length === 0}
-                        className="flex items-center gap-2 px-4 py-2.5 bg-red-500 hover:bg-red-600 disabled:bg-red-300 text-white rounded-lg font-medium text-sm transition-all duration-200 shadow-sm hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 group"
-                        title="Télécharger PDF"
+                        disabled={loading || objectifs.length === 0 || exportingPDF}
+                        className="relative flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 disabled:from-red-300 disabled:to-red-400 text-white rounded-xl font-semibold text-sm transition-all duration-300 shadow-lg hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50 group overflow-hidden"
+                        title="Télécharger PDF" 
+                        style={{
+                          background: 'rgb(129 22 22 / 96%)',
+                        }}
                       >
-                        <i className="ri-file-pdf-line text-lg group-hover:scale-110 transition-transform"></i>
-                        <span>PDF</span>
+                        {/* Loading spinner */}
+                        {exportingPDF && (
+                          <div className="absolute inset-0 bg-red-600/80 flex items-center justify-center rounded-xl">
+                            <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                          </div>
+                        )}
+                        
+                        {/* Button content */}
+                        <div className="flex items-center gap-2">
+                          <i className={`ri-file-pdf-line text-lg transition-transform ${exportingPDF ? 'animate-pulse' : 'group-hover:scale-110'}`}></i>
+                          <span>{exportingPDF ? 'Export...' : 'PDF'}</span>
+                        </div>
+                        
+                        {/* Shine effect */}
+                        <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:translate-x-full transition-transform duration-1000"></div>
                       </button>
+                      
+                      {/* Export Info Tooltip */}
+                      {/* {(objectifs.length > 0) && (
+                        <div className="flex items-center gap-1 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-medium border border-blue-200 dark:border-blue-700">
+                          <i className="ri-information-line"></i>
+                          <span>Export complet avec filtres</span>
+                        </div>
+                      )} */}
                     </div>
                     
                     {/* Clear Filters Button */}
