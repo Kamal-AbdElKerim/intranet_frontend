@@ -73,6 +73,17 @@ export const MENUITEMS = [
     active: false,
     title: "Users",
   },
+
+  {
+    path: `${import.meta.env.BASE_URL}Pmo/Objectifs`,
+    icon: (<i className="mdi mdi-target side-menu__icon mb-2"></i>),
+    type: "link",
+    selected: false,
+    dirchange: false,
+    active: false,
+    title: "Objectifs",
+  },
+
   // {
   //   path: `${import.meta.env.BASE_URL}DemandesAdministratives/admin/Users`,
   //   icon: (<i className="mdi mdi-security side-menu__icon mb-2"></i>),
