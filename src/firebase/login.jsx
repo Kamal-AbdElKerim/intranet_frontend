@@ -51,7 +51,7 @@ const Login = ({ ThemeChanger }) => {
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                const response = await axiosInstance.get('/projects');
+                const response = await axiosInstance.get('/getprojects');
                 if (response.data && response.data.data) {
                     setProjects(response.data.data);
                     if (response.data.data.length > 0) {

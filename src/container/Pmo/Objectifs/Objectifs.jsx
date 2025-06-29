@@ -163,6 +163,7 @@ const Objectifs = () => {
   const [objectifToView, setObjectifToView] = useState(null);
   const [showViewModal, setShowViewModal] = useState(false);
   const [showProjectsModal, setShowProjectsModal] = useState(false);
+  const [years, setYears] = useState([]);
 
   // Fetch objectifs
   const fetchObjectifs = async (page = 1, search = '', status = '', year = '') => {
@@ -216,9 +217,32 @@ const Objectifs = () => {
     }
   };
 
+  // Fetch years from database
+  const fetchYears = async () => {
+    try {
+      const response = await axiosInstance.get('/pmo/objectifs/years');
+      console.log(response.data);
+      if (response.data?.status === 'success' && Array.isArray(response.data.data)) {
+        setYears(response.data.data);
+        if (response.data.data.length === 0) {
+          console.log('No years found in database');
+        }
+      } else {
+        console.error('Invalid response format:', response.data);
+        ToastService.error('Format de données des années invalide');
+        setYears([]);
+      }
+    } catch (error) {
+      console.error('Error fetching years:', error);
+      ToastService.error('Erreur lors du chargement des années');
+      setYears([]);
+    }
+  };
+
   useEffect(() => {
     fetchObjectifs(1, '', '', '');
     fetchEntities();
+    fetchYears();
     // eslint-disable-next-line
   }, []);
 
@@ -720,16 +744,9 @@ const Objectifs = () => {
                           className="custom-select select"
                         >
                           <option value="">Toutes les années</option>
-                          {(() => {
-                            const currentYear = new Date().getFullYear();
-                            const years = [];
-                            for (let year = currentYear + 2; year >= currentYear - 5; year--) {
-                              years.push(year);
-                            }
-                            return years.map(year => (
-                              <option key={year} value={year}>{year}</option>
-                            ));
-                          })()}
+                          {years.map(year => (
+                            <option key={year} value={year}>{year}</option>
+                          ))}
                         </select>
                       </div>
                     </div>
