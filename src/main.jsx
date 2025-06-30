@@ -19,6 +19,7 @@ import Users from './container/Pages_DashboardAdmin/users/users.jsx'
 import Profile from './container/Pages_DemandesAdministratives/profile/Profile.jsx'
 import Objectifs from './container/Pmo/Objectifs/Objectifs.jsx'
 import Projects from './container/Pmo/Projects/Projects.jsx'
+import ProjectDetails from './container/Pmo/Projects/ProjectDetails.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.Fragment>
@@ -47,6 +48,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path="admin/Profile" element={<Profile />} />
                   <Route path="Pmo/Objectifs" element={<Objectifs />} />
                   <Route path="Pmo/Projects" element={<Projects />} />
+                  <Route path="Pmo/Projects/:projectId" element={<ProjectDetails />} />
                
                   {/* <Route path="DemandesAdministratives/pages/empty" element={<Empty />} /> */}
                   {/* ... other routes ... */}
