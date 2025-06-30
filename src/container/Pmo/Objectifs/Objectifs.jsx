@@ -650,109 +650,9 @@ const Objectifs = () => {
                   Gestion des Objectifs
                 </div>
                 <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-                  <div className="relative w-full sm:w-64">
-                    <div className="flex items-center gap-2">
-                      <div className="relative flex-1">
-                        <input
-                          type="text"
-                          placeholder="Rechercher un objectif..."
-                          value={searchTerm}
-                          onChange={e => setSearchTerm(e.target.value)}
-                          className="w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white"
-                        />
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                          </svg>
-                        </div>
-                        {searchTerm && (
-                          <button
-                            onClick={handleClearSearch}
-                            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                          >
-                            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                          </button>
-                        )}
-                      </div>
-                      <button
-                        onClick={handleSearch}
-                        className="ti-btn ti-btn-icon ti-btn-primary-full ti-btn-wave"
-                        title="Rechercher"
-                      >
-                        <i className="ri-search-line"></i>
-                      </button>
-                    </div>
-                  </div>
-                  <button
-                    onClick={handleAddObjectif}
-                    className="ti-btn ti-btn-primary-full ti-btn-wave"
-                  >
-                    <i className="ri-add-line me-2"></i>
-                    Ajouter un Objectif
-                  </button>
-                </div>
-              </div>
               
-              {/* Filters Section */}
-              <div className="w-full mt-5 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 border border-blue-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
-                <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-                  {/* Filter Header */}
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                      <i className="ri-filter-3-line text-blue-600 dark:text-blue-400 text-lg"></i>
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Filtres</h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Affinez votre recherche</p>
-                    </div>
-                  </div>
-                  
-                  {/* Filter Controls */}
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 flex-1">
-                    {/* Status Filter */}
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 min-w-[200px]">
-                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                        <i className="ri-checkbox-multiple-line mr-1 text-blue-500"></i>
-                        Statut
-                      </label>
-                      <div className="custom-select status-select">
-                        <select
-                          value={statusFilter}
-                          onChange={(e) => handleStatusFilter(e.target.value)}
-                          className="custom-select select"
-                        >
-                          <option value="">Tous les statuts</option>
-                          {statusOptions.map(opt => (
-                            <option key={opt.value} value={opt.value}>{opt.label}</option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                    
-                    {/* Year Filter */}
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 min-w-[180px]">
-                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                        <i className="ri-calendar-line mr-1 text-green-500"></i>
-                        Année
-                      </label>
-                      <div className="custom-select year-select">
-                        <select
-                          value={yearFilter}
-                          onChange={(e) => handleYearFilter(e.target.value)}
-                          className="custom-select select"
-                        >
-                          <option value="">Toutes les années</option>
-                          {years.map(year => (
-                            <option key={year} value={year}>{year}</option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                    
-                    {/* Export Buttons */}
-                    <div className="flex items-center gap-3">
+    {/* Export Buttons */}
+    <div className="flex items-center gap-3">
                       {/* Excel Export Button */}
                       <button
                         onClick={handleExportExcel}
@@ -812,6 +712,101 @@ const Objectifs = () => {
                         </div>
                       )} */}
                     </div>
+
+                  <button
+                    onClick={handleAddObjectif}
+                    className="ti-btn ti-btn-primary-full ti-btn-wave"
+                  >
+                    <i className="ri-add-line me-2"></i>
+                    Ajouter un Objectif
+                  </button>
+                </div>
+              </div>
+              
+              {/* Filters Section */}
+              <div className="w-full mt-5 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 border border-blue-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+                <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+                  {/* Search Input */}
+                  <div className="flex items-center gap-2 w-full lg:w-auto lg:min-w-[300px]">
+                    <div className="relative flex-1 lg:flex-none lg:w-64">
+                      <input
+                        type="text"
+                        placeholder="Rechercher un objectif..."
+                        value={searchTerm}
+                        onChange={e => setSearchTerm(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handleSearch();
+                          }
+                        }}
+                        className="w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white"
+                      />
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      </div>
+                      {searchTerm && (
+                        <button
+                          onClick={handleClearSearch}
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                        >
+                          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                    <button
+                      onClick={handleSearch}
+                      className="ti-btn ti-btn-icon ti-btn-primary-full ti-btn-wave"
+                      title="Rechercher"
+                    >
+                      <i className="ri-search-line"></i>
+                    </button>
+                  </div>
+                  
+                  {/* Filter Controls */}
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto">
+                    {/* Status Filter */}
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 min-w-[200px]">
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                        <i className="ri-checkbox-multiple-line mr-1 text-blue-500"></i>
+                        Statut
+                      </label>
+                      <div className="custom-select status-select">
+                        <select
+                          value={statusFilter}
+                          onChange={(e) => handleStatusFilter(e.target.value)}
+                          className="custom-select select"
+                        >
+                          <option value="">Tous les statuts</option>
+                          {statusOptions.map(opt => (
+                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    
+                    {/* Year Filter */}
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 min-w-[180px]">
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                        <i className="ri-calendar-line mr-1 text-green-500"></i>
+                        Année
+                      </label>
+                      <div className="custom-select year-select">
+                        <select
+                          value={yearFilter}
+                          onChange={(e) => handleYearFilter(e.target.value)}
+                          className="custom-select select"
+                        >
+                          <option value="">Toutes les années</option>
+                          {years.map(year => (
+                            <option key={year} value={year}>{year}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
                     
                     {/* Clear Filters Button */}
                     {(statusFilter || yearFilter || searchTerm) && (
@@ -819,8 +814,8 @@ const Objectifs = () => {
                         onClick={handleClearFilters}
                         className="ti-btn ti-btn-outline-danger ti-btn-wave"
                       >
-                        <i className="ri-refresh-line me-2"></i>
-                        Effacer les filtres
+                        <i className="ri-refresh-line"></i>
+                        {/* Effacer les filtres */}
                       </button>
                     )}
                   </div>

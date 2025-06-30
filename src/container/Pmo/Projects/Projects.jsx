@@ -10,7 +10,7 @@ import '../../../styles/table.css';
 import '../../../styles/error.css';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -680,7 +680,7 @@ const rangeSliderStyles = `
   }
   
   .project-form-modal-header {
-    background: linear-gradient(135deg, #596f91cf 0%, #464779db 50%, #b3aac8 100%);
+    background: linear-gradient(264deg, #173566cf 0%, #4d2378 50%, #4d2378 100%);
     padding: 1.5rem 2rem;
     border-radius: 1rem 1rem 0 0;
     position: relative;
@@ -1032,6 +1032,20 @@ const rangeSliderStyles = `
   .custom-select.project-type-select select { border-color: #8b5cf6; }
   .custom-select.project-type-select select:hover { border-color: #7c3aed; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15); }
   .custom-select.project-type-select select:focus { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1), 0 4px 12px rgba(124, 58, 237, 0.15); }
+
+.custom-link-blue {
+  color: #2563eb; /* blue-600 */
+}
+.custom-link-blue:hover {
+  color: #1d4ed8; /* blue-700 */
+  text-decoration: underline;
+}
+.dark .custom-link-blue {
+  color: #60a5fa; /* blue-400 */
+}
+.dark .custom-link-blue:hover {
+  color: #3b82f6; /* blue-500 */
+}
 `;
 
 const statusOptions = [
@@ -1656,26 +1670,8 @@ const Projects = () => {
       const merges = [];
       let currentRow = 1; // 0 is header
 
-      // Build array of Objectif groups with their latest project date
-      const sortedGroups = Object.values(projectsByObjective)
-        .map(group => {
-          // Find the latest start_date in this group
-          const latestDate = group.projects.reduce((max, p) => {
-            const d = p.start_date ? new Date(p.start_date).getTime() : 0;
-            return d > max ? d : max;
-          }, 0);
-          return { ...group, latestDate };
-        })
-        .sort((a, b) => b.latestDate - a.latestDate); // Descending order
-
-      // Now loop over sorted groups
-      sortedGroups.forEach(({ objective, projects }) => {
-        // Sort projects by Date début estimée (start_date) in descending order (latest first)
-        projects.sort((a, b) => {
-          const dateA = a.start_date ? new Date(a.start_date).getTime() : 0;
-          const dateB = b.start_date ? new Date(b.start_date).getTime() : 0;
-          return dateB - dateA;
-        });
+      // Loop over groups in original order
+      Object.values(projectsByObjective).forEach(({ objective, projects }) => {
         // Count total rows for this objectif
         let objectifRowStart = currentRow;
         let objectifRowCount = 0;
@@ -1851,7 +1847,7 @@ const Projects = () => {
         projectsByObjective[objectiveId].projects.push(project);
       });
       
-      // Prepare table data with comprehensive structure
+      // Prepare table data with hierarchical structure
       const tableData = [];
       
       Object.values(projectsByObjective).forEach(({ objective, projects }) => {
@@ -1866,63 +1862,84 @@ const Projects = () => {
           // Get year from project data
           const projectYear = project['Année'] || new Date(project.start_date).getFullYear() || '';
           
-          // Base project row
-          const projectRow = [
-            objective?.id || '-',
-            objective?.titre ? (objective.titre.length > 30 ? objective.titre.substring(0, 30) + '...' : objective.titre) : '-',
-            project.id || '-',
-            project.title ? (project.title.length > 25 ? project.title.substring(0, 25) + '...' : project.title) : '-',
-        project.project_type?.title || '-',
-            project.entite?.company_name || '-',
-            projectYear,
-            project.client?.company_name ? (project.client.company_name.length > 20 ? project.client.company_name.substring(0, 20) + '...' : project.client.company_name) : '-',
-            project.start_date ? formatDate(project.start_date, true) : '-',
-            project.deadline ? formatDate(project.deadline, true) : '-',
-            statusLabel,
-            `${project.prog || 0}%`,
-            pacStatus,
-            project.price || '0.00',
-            `${project.prog_price || 0}%`,
-            project.tasks ? project.tasks.length : 0,
-            project.tasks ? project.tasks.filter(task => task.assignments && task.assignments.length > 0).length : 0
-          ];
-          
-          tableData.push(projectRow);
+          if (project.tasks && project.tasks.length > 0) {
+            // Add tasks for this project
+            project.tasks.forEach((task, taskIndex) => {
+              const responsibleName = task.assigned_user
+                ? `${task.assigned_user.first_name || ''} ${task.assigned_user.last_name || ''}`.trim()
+                : (task.assigned_to ? task.assigned_to : '');
+              
+              tableData.push([
+                objective?.titre || '-',
+                project.title || '-',
+                project.project_type?.title || '-',
+                task.title || '-',
+                project.entite?.company_name || '-',
+                projectYear,
+                project.client?.company_name || '-',
+                responsibleName,
+                project.start_date ? formatDate(project.start_date, true) : '-',
+                project.deadline ? formatDate(project.deadline, true) : '-',
+                statusLabel,
+                `${project.prog || 0}%`,
+                pacStatus
+              ]);
+            });
+          } else {
+            // Project without tasks
+            tableData.push([
+              objective?.titre || '-',
+              project.title || '-',
+              project.project_type?.title || '-',
+              '-', // No task
+              project.entite?.company_name || '-',
+              projectYear,
+              project.client?.company_name || '-',
+              project.creator?.name || '-',
+              project.start_date ? formatDate(project.start_date, true) : '-',
+              project.deadline ? formatDate(project.deadline, true) : '-',
+              statusLabel,
+              `${project.prog || 0}%`,
+              pacStatus
+            ]);
+          }
         });
       });
       
       // Add table with comprehensive styling
       autoTable(doc, {
-        head: [['Obj ID', 'Objectif', 'Proj ID', 'Projet', 'Type', 'Entité', 'Année', 'Maître d\'ouvrage', 'Début', 'Fin', 'Statut', 'Avancement', 'PAC', 'Budget', 'Engagement', 'Tâches', 'Assignées']],
+        head: [['Objectif', 'Projet', 'Type', 'Tâche', 'Entité', 'Année', 'Maître d\'ouvrage', 'Responsable', 'Début', 'Fin', 'Statut', 'Avancement', 'PAC']],
         body: tableData,
         startY: 40,
         styles: {
-          fontSize: 8,
+          fontSize: 7,
           cellPadding: 2,
+          lineColor: [200, 200, 200],
+          lineWidth: 0.1,
         },
         headStyles: {
           fillColor: [59, 130, 246],
           textColor: 255,
           fontStyle: 'bold',
+          fontSize: 8,
         },
         columnStyles: {
-          0: { cellWidth: 8 },  // Obj ID
-          1: { cellWidth: 25 }, // Objectif
-          2: { cellWidth: 8 },  // Proj ID
-          3: { cellWidth: 25 }, // Projet
-          4: { cellWidth: 15 }, // Type
-          5: { cellWidth: 20 }, // Entité
-          6: { cellWidth: 8 },  // Année
-          7: { cellWidth: 20 }, // Maître d'ouvrage
-          8: { cellWidth: 12 }, // Début
-          9: { cellWidth: 12 }, // Fin
-          10: { cellWidth: 12 }, // Statut
-          11: { cellWidth: 10 }, // Avancement
-          12: { cellWidth: 6 },  // PAC
-          13: { cellWidth: 10 }, // Budget
-          14: { cellWidth: 10 }, // Engagement
-          15: { cellWidth: 8 },  // Tâches
-          16: { cellWidth: 10 }  // Assignées
+          0: { cellWidth: 'auto' }, // Objectif
+          1: { cellWidth: 'auto' }, // Projet
+          2: { cellWidth: 'auto' }, // Type
+          3: { cellWidth: 'auto' }, // Tâche
+          4: { cellWidth: 'auto' }, // Entité
+          5: { cellWidth: 'auto' }, // Année
+          6: { cellWidth: 'auto' }, // Maître d'ouvrage
+          7: { cellWidth: 'auto' }, // Responsable
+          8: { cellWidth: 'auto' }, // Début
+          9: { cellWidth: 'auto' }, // Fin
+          10: { cellWidth: 'auto' }, // Statut
+          11: { cellWidth: 'auto' }, // Avancement
+          12: { cellWidth: 'auto' }  // PAC
+        },
+        alternateRowStyles: {
+          fillColor: [248, 250, 252],
         },
         didDrawPage: function (data) {
           // Add page number
@@ -1933,7 +1950,9 @@ const Projects = () => {
             data.settings.margin.left,
             doc.internal.pageSize.height - 10
           );
-        }
+        },
+        margin: { top: 40, right: 10, bottom: 20, left: 10 },
+        tableWidth: 'auto'
       });
       
       // Generate filename with filters
@@ -1975,129 +1994,8 @@ const Projects = () => {
                   Gestion des Projects
                 </div>
                 <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-                  <div className="relative w-full sm:w-64">
-                    <div className="flex items-center gap-2">
-                      <div className="relative flex-1">
-                        <input
-                          type="text"
-                          placeholder="Rechercher un project..."
-                          value={searchTerm}
-                          onChange={e => setSearchTerm(e.target.value)}
-                          className="w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white"
-                        />
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                          </svg>
-                        </div>
-                        {searchTerm && (
-                          <button
-                            onClick={handleClearSearch}
-                            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                          >
-                            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                          </button>
-                        )}
-                      </div>
-                      <button
-                        onClick={handleSearch}
-                        className="ti-btn ti-btn-icon ti-btn-primary-full ti-btn-wave"
-                        title="Rechercher"
-                      >
-                        <i className="ri-search-line"></i>
-                      </button>
-                    </div>
-                  </div>
-                  <button
-                    onClick={handleAddProject}
-                    className="ti-btn ti-btn-primary-full ti-btn-wave"
-                  >
-                    <i className="ri-add-line me-2"></i>
-                    Ajouter un Project
-                  </button>
-                </div>
-              </div>
-              
-              {/* Filters Section */}
-              <div className="w-full mt-5 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 border border-blue-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
-                <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-                  {/* Filter Header */}
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                      <i className="ri-filter-3-line text-blue-600 dark:text-blue-400 text-lg"></i>
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Filtres</h3>
-                      {/* <p className="text-sm text-gray-600 dark:text-gray-400">Affinez votre recherche</p> */}
-                    </div>
-                  </div>
-                  
-                  {/* Filter Controls */}
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 flex-1">
-                    {/* Status Filter */}
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 min-w-[200px]">
-                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                        <i className="ri-checkbox-multiple-line mr-1 text-blue-500"></i>
-                        Statut
-                      </label>
-                      <div className="custom-select status-select">
-                        <select
-                          value={statusFilter}
-                          onChange={(e) => handleStatusFilter(e.target.value)}
-                          className="custom-select select"
-                        >
-                          <option value="">Tous les statuts</option>
-                          {getStatusOptions(formOptions).map(opt => (
-                            <option key={opt.value} value={opt.value}>{opt.label}</option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                    
-                    {/* Year Filter */}
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 min-w-[180px]">
-                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                        <i className="ri-calendar-line mr-1 text-green-500"></i>
-                        Année
-                      </label>
-                      <div className="custom-select year-select">
-                        <select
-                          value={yearFilter}
-                          onChange={(e) => handleYearFilter(e.target.value)}
-                          className="custom-select select"
-                        >
-                          <option value="">Toutes les années</option>
-                          {years.map(year => (
-                            <option key={year} value={year}>{year}</option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                    
-                    {/* Project Type Filter */}
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 min-w-[180px]">
-                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                        <i className="ri-project-2-line mr-1 text-purple-500"></i>
-                        Projet
-                      </label>
-                      <div className="custom-select project-type-select">
-                        <select
-                          value={projectTypeFilter}
-                          onChange={(e) => handleProjectTypeFilter(e.target.value)}
-                          className="custom-select select"
-                        >
-                          <option value="">Tous les types</option>
-                          {getProjectTypeOptions(formOptions).map(opt => (
-                            <option key={opt.value} value={opt.value}>{opt.label}</option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                    
-                    {/* Export Buttons */}
-                    <div className="flex items-center gap-3">
+                      {/* Export Buttons */}
+                      <div className="flex items-center gap-3">
                       {/* Excel Export Button */}
                       <button
                         onClick={handleExportExcel}
@@ -2151,12 +2049,133 @@ const Projects = () => {
                       
                       {/* Export Info Tooltip */}
                       {/* {(projects.length > 0) && (
-                        <div className="flex items-center gap-1 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-medium border border-blue-200 dark:border-blue-700">
+                        <div className="flex items-center gap-1 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-info-700 dark:text-info-300 rounded-lg text-xs font-medium border border-blue-200 dark:border-blue-700">
                           <i className="ri-information-line"></i>
                           <span>Export complet avec filtres</span>
                         </div>
                       )} */}
                     </div>
+                  <button
+                    onClick={handleAddProject}
+                    className="ti-btn ti-btn-primary-full ti-btn-wave"
+                  >
+                    <i className="ri-add-line me-2"></i>
+                    Ajouter un Project
+                  </button>
+                </div>
+              </div>
+              
+              {/* Filters Section */}
+              <div className="w-full mt-5 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 border border-blue-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+                <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                  {/* Search Input */}
+                  <div className="flex items-center gap-2 w-full lg:w-auto lg:min-w-[300px]">
+                    <div className="relative flex-1 lg:flex-none lg:w-64">
+                      <input
+                        type="text"
+                        placeholder="Rechercher un project..."
+                        value={searchTerm}
+                        onChange={e => setSearchTerm(e.target.value)}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter') {
+                            handleSearch();
+                          }
+                        }}
+                        className="w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white"
+                      />
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      </div>
+                      {searchTerm && (
+                        <button
+                          onClick={handleClearSearch}
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                        >
+                          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                    <button
+                      onClick={handleSearch}
+                      className="ti-btn ti-btn-icon ti-btn-primary-full ti-btn-wave"
+                      title="Rechercher"
+                    >
+                      <i className="ri-search-line"></i>
+                    </button>
+                  </div>
+                  
+                  {/* Filter Controls */}
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto">
+
+                 
+
+                    {/* Status Filter */}
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 min-w-[200px]">
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                        <i className="ri-checkbox-multiple-line mr-1 text-info-500"></i>
+                        Statut
+                      </label>
+                      <div className="custom-select status-select">
+                        <select
+                          value={statusFilter}
+                          onChange={(e) => handleStatusFilter(e.target.value)}
+                          className="custom-select select"
+                        >
+                          <option value="">Tous les statuts</option>
+                          {getStatusOptions(formOptions).map(opt => (
+                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    
+                    {/* Year Filter */}
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 min-w-[180px]">
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                        <i className="ri-calendar-line mr-1 text-green-500"></i>
+                        Année
+                      </label>
+                      <div className="custom-select year-select">
+                        <select
+                          value={yearFilter}
+                          onChange={(e) => handleYearFilter(e.target.value)}
+                          className="custom-select select"
+                        >
+                          <option value="">Toutes les années</option>
+                          {years.map(year => (
+                            <option key={year} value={year}>{year}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    
+                    {/* Project Type Filter */}
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 min-w-[180px]">
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                      <i className="ri-folder-line mr-1 text-purple-500"></i>
+                        Projet
+                      </label>
+                      <div className="custom-select project-type-select">
+                        <select
+                          value={projectTypeFilter}
+                          onChange={(e) => handleProjectTypeFilter(e.target.value)}
+                          className="custom-select select"
+                        >
+                          <option value="">Tous les types</option>
+                          {getProjectTypeOptions(formOptions).map(opt => (
+                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+             
+                    
+             
                     
                     {/* Clear Filters Button */}
                     {(statusFilter || yearFilter || projectTypeFilter || searchTerm) && (
@@ -2175,10 +2194,10 @@ const Projects = () => {
                 {(statusFilter || yearFilter || projectTypeFilter || searchTerm) && (
                   <div className="mt-4 pt-4 border-t border-blue-200 dark:border-gray-700">
                     <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium">
+                      <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-info-700 dark:text-info-300 rounded-full text-sm font-medium">
                         <i className="ri-check-line"></i>
                         <span>Filtres actifs:</span>
-                        <span className="bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-200 px-2 py-0.5 rounded-full text-xs">
+                        <span className="bg-blue-200 dark:bg-blue-800 text-info-800 dark:text-info-200 px-2 py-0.5 rounded-full text-xs">
                           {[statusFilter, yearFilter, projectTypeFilter, searchTerm].filter(Boolean).length}
                         </span>
                       </div>
@@ -2190,7 +2209,7 @@ const Projects = () => {
                           </span>
                         )}
                         {statusFilter && (
-                          <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-md text-xs">
+                          <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-info-700 dark:text-info-300 rounded-md text-xs">
                             <i className="ri-checkbox-line"></i>
                             {getStatusOptions(formOptions).find(opt => opt.value === statusFilter)?.label || statusFilter}
                           </span>
@@ -2288,6 +2307,9 @@ const Projects = () => {
                                     <i className="ri-arrow-up-down-line text-gray-400"></i>
                                   </div>
                                 </th>
+                                <th className="px-4 py-4 text-left font-semibold text-gray-700 dark:text-gray-300 min-w-[100px]">
+                                  Avancement
+                                </th>
                                 <th className="px-4 py-4 text-right font-semibold text-gray-700 dark:text-gray-300 min-w-[120px]">
                                   Actions
                                 </th>
@@ -2298,15 +2320,15 @@ const Projects = () => {
                                 projects.map((project) => (
                                   <tr key={project.id} className="hover:bg-gray-50 dark:hover:bg-black/20 h-16 transition-colors">
                                     <td className="px-4 py-4 text-gray-700 dark:text-gray-300">
-                                      <div className="max-w-[160px] truncate" title={project.objectif?.titre || '-'}>
+                                      <div style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
                                         {project.objectif?.titre || '-'}
                                       </div>
                                     </td>
                                     <td className="px-4 py-4 text-gray-900 dark:text-white font-medium">
-                                      <div className="max-w-[180px] truncate" title={project.title}>
+                                      <div style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
                                         <button
                                           onClick={() => handleProjectDetails(project)}
-                                          className="text-left hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
+                                          className="text-left custom-link-blue transition-colors cursor-pointer"
                                         >
                                           {project.title}
                                         </button>
@@ -2332,7 +2354,7 @@ const Projects = () => {
                                         const statusOption = getStatusOptions(formOptions).find(opt => opt.value === project.status);
                                         const colorClasses = {
                                           'open': 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-700',
-                                          'planned': 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-700',
+                                          'planned': 'bg-blue-50 text-info-700 border-blue-200 dark:bg-blue-900/20 dark:text-info-300 dark:border-blue-700',
                                           'completed': 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-700',
                                           'hold': 'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300 dark:border-yellow-700',
                                           'canceled': 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-700',
@@ -2349,6 +2371,26 @@ const Projects = () => {
                                           </span>
                                         );
                                       })()}
+                                    </td>
+                                    <td className="px-4 py-4">
+                                      <div className="flex items-center gap-2 min-w-[90px]">
+                                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                                          <div
+                                            className="h-3 rounded-full transition-all duration-300"
+                                            style={{
+                                              width: `${project.prog || 0}%`,
+                                              background: project.prog >= 100
+                                                ? '#22c55e'
+                                                : project.prog >= 75
+                                                ? '#f59e42'
+                                                : project.prog >= 50
+                                                ? '#facc15'
+                                                : '#3b82f6'
+                                            }}
+                                          ></div>
+                                        </div>
+                                        <span className="text-xs font-semibold text-gray-700 dark:text-gray-200" style={{minWidth: 32, textAlign: 'right'}}>{project.prog || 0}%</span>
+                                      </div>
                                     </td>
                                     <td className="px-4 py-4 text-right">
                                       <div className="flex justify-end space-x-2">
