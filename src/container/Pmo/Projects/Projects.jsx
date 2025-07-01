@@ -1046,6 +1046,16 @@ const rangeSliderStyles = `
 .dark .custom-link-blue:hover {
   color: #3b82f6; /* blue-500 */
 }
+
+.badge.status-badge {
+  font-weight: 600;
+  font-size: 0.85em;
+  padding: 0.4em 1.1em;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+}
 `;
 
 const statusOptions = [
@@ -1146,6 +1156,21 @@ const getPoidsRange = (poids) => {
   if (poids <= 50) return { label: 'Moyen', color: '#f5b849', bgColor: 'rgba(245, 184, 73, 0.1)', textColor: '#f5b849' };
   if (poids <= 80) return { label: 'Élevé', color: '#ffa505', bgColor: 'rgba(255, 165, 5, 0.1)', textColor: '#ffa505' };
   return { label: 'Critique', color: '#e6533c', bgColor: 'rgba(230, 83, 60, 0.1)', textColor: '#e6533c' };
+};
+
+// Add this helper function before the Projects component
+const getStatusBadgeClass = (status) => {
+  switch (status) {
+    case 'open': return 'badge !rounded-full bg-success/10 text-success border border-success/20';
+    case 'planned': return 'badge !rounded-full bg-info/10 text-info border border-info/20';
+    case 'completed': return 'badge !rounded-full bg-primary text-white border border-primary/20';
+    case 'hold': return 'badge !rounded-full bg-warning/10 text-warning border border-warning/20';
+    case 'canceled': return 'badge !rounded-full bg-danger/10 text-danger border border-danger/20';
+    case 'not_started': return 'badge !rounded-full bg-dark/10 text-black border border-dark/20';
+    case 'continuous_action': return 'badge !rounded-full bg-purple/10 text-purple border border-purple/20';
+    case 'archived': return 'badge !rounded-full bg-secondary/10 text-secondary border border-secondary/20';
+    default: return 'badge !rounded-full bg-dark/10 text-black border border-dark/20';
+  }
 };
 
 const Projects = () => {
@@ -2352,21 +2377,9 @@ const Projects = () => {
                                     <td className="px-4 py-4">
                                       {(() => {
                                         const statusOption = getStatusOptions(formOptions).find(opt => opt.value === project.status);
-                                        const colorClasses = {
-                                          'open': 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-700',
-                                          'planned': 'bg-blue-50 text-info-700 border-blue-200 dark:bg-blue-900/20 dark:text-info-300 dark:border-blue-700',
-                                          'completed': 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-700',
-                                          'hold': 'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300 dark:border-yellow-700',
-                                          'canceled': 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-700',
-                                          'not_started': 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-900/20 dark:text-gray-300 dark:border-gray-700',
-                                          'continuous_action': 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-700',
-                                          'archived': 'bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-900/20 dark:text-slate-300 dark:border-slate-700'
-                                        };
                                         return (
-                                          <span
-                                            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border ${colorClasses[project.status] || colorClasses['not_started']}`}
-                                          >
-                                            <i className={`${statusOption?.icon || 'ri-question-line'}`}></i>
+                                          <span className={getStatusBadgeClass(project.status)}>
+                                            {/* <i className={`${statusOption?.icon || 'ri-question-line'}`}></i> */}
                                             {statusOption?.label || project.status}
                                           </span>
                                         );
@@ -2716,21 +2729,21 @@ const Projects = () => {
                       <label className="project-form-label">
                         Budget d'Engagement (%)
                       </label>
-                      <Select
-                        options={getProgressOptions()}
-                        value={getProgressOptions().find(option => option.value === formData.prog_price)}
-                        onChange={(option) => handleSelectChange('prog_price', option)}
-                        placeholder="Sélectionner le pourcentage"
-                        className="react-select-container"
-                        classNamePrefix="react-select"
-                        isClearable
-                      />
-                      {errors.prog_price && (
-                        <div className="project-form-error">
-                          <i className="ri-error-warning-line project-form-error-icon"></i>
-                          <span>{errors.prog_price}</span>
+                      <div className="flex flex-col gap-2">
+                        <input
+                          type="range"
+                          min={0}
+                          max={100}
+                          step={5}
+                          value={formData.prog_price}
+                          onChange={e => setFormData(prev => ({ ...prev, prog_price: Number(e.target.value) }))}
+                          className="w-full"
+                          style={{ accentColor: '#8b5cf6' }} // purple for engagement
+                        />
+                        <div className="text-sm font-semibold text-center" style={{ color: '#8b5cf6' }}>
+                          {formData.prog_price}%
                         </div>
-                      )}
+                      </div>
                     </div>
                     <div className="project-form-field">
                       <label className="project-form-label">
@@ -2772,21 +2785,21 @@ const Projects = () => {
                       <label className="project-form-label">
                         Avancement du Projet <span className="project-form-required">*</span>
                       </label>
-                      <Select
-                        options={getProgressOptions()}
-                        value={getProgressOptions().find(option => option.value === formData.prog)}
-                        onChange={(option) => handleSelectChange('prog', option)}
-                        placeholder="Sélectionner le pourcentage d'avancement"
-                        className="react-select-container"
-                        classNamePrefix="react-select"
-                        isClearable
-                      />
-                      {errors.prog && (
-                        <div className="project-form-error">
-                          <i className="ri-error-warning-line project-form-error-icon"></i>
-                          <span>{errors.prog}</span>
+                      <div className="flex flex-col gap-2">
+                        <input
+                          type="range"
+                          min={0}
+                          max={100}
+                          step={5}
+                          value={formData.prog}
+                          onChange={e => setFormData(prev => ({ ...prev, prog: Number(e.target.value) }))}
+                          className="w-full"
+                          style={{ accentColor: '#22c55e' }} // green for progress
+                        />
+                        <div className="text-sm font-semibold text-center" style={{ color: '#22c55e' }}>
+                          {formData.prog}%
                         </div>
-                      )}
+                      </div>
                     </div>
                   </div>
                 </div>

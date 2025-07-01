@@ -1,4 +1,5 @@
 import { Fragment, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Pageheader from '../../../components/common/pageheader/pageheader';
 import ToastService from '../../../components/utile/toastService';
 import CustomPagination from '../../../components/utile/CustomPagination';
@@ -164,6 +165,8 @@ const Objectifs = () => {
   const [showViewModal, setShowViewModal] = useState(false);
   const [showProjectsModal, setShowProjectsModal] = useState(false);
   const [years, setYears] = useState([]);
+
+  const navigate = useNavigate();
 
   // Fetch objectifs
   const fetchObjectifs = async (page = 1, search = '', status = '', year = '') => {
@@ -448,6 +451,12 @@ const Objectifs = () => {
   const handleView = (objectif) => {
     setObjectifToView(objectif);
     setShowViewModal(true);
+  };
+
+  const handleProjectNavigation = (project) => {
+    setShowProjectsModal(false);
+    setShowViewModal(false);
+    navigate(`/Pmo/Projects/${project.id}`);
   };
 
   const handleDeleteConfirm = async () => {
@@ -1737,6 +1746,10 @@ const Objectifs = () => {
                     <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1">Projets Associés</h2>
                     <p className="text-orange-100 text-sm sm:text-base lg:text-lg">
                       {objectifToView.projects.filter(p => !p.deleted).length} projet(s) actif(s)
+                      <span className="ml-2 inline-flex items-center gap-1 text-xs bg-white/20 px-2 py-1 rounded-full">
+                        <i className="ri-cursor-line"></i>
+                        Cliquez pour voir les détails
+                      </span>
                     </p>
                   </div>
                 </div>
@@ -1762,11 +1775,16 @@ const Objectifs = () => {
                     {objectifToView.projects
                       .filter(project => !project.deleted)
                       .map((project, index) => (
-                        <div key={project.id} className="bg-white dark:bg-gray-600 rounded-lg sm:rounded-xl border-2 border-orange-200 dark:border-gray-500 p-4 sm:p-6 shadow-sm">
+                        <div 
+                          key={project.id} 
+                          className="bg-white dark:bg-gray-600 rounded-lg sm:rounded-xl border-2 border-orange-200 dark:border-gray-500 p-4 sm:p-6 shadow-sm cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-all duration-300 hover:border-orange-400 dark:hover:border-orange-500 group"
+                          onClick={() => handleProjectNavigation(project)}
+                        >
                           <div className="flex items-start justify-between mb-3 sm:mb-4">
                             <div className="flex-1">
-                              <h4 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                              <h4 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                                 {project.title}
+                                <i className="ri-external-link-line ml-2 text-sm opacity-0 group-hover:opacity-100 transition-opacity"></i>
                               </h4>
                               <div className="flex items-center gap-3 sm:gap-4 text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-3">
                                 <span className="flex items-center gap-1">
@@ -1834,6 +1852,14 @@ const Objectifs = () => {
                               </p>
                             </div>
                           )}
+                          
+                          {/* Click indicator */}
+                          <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-500">
+                            <div className="flex items-center justify-center gap-2 text-xs text-orange-600 dark:text-orange-400 font-medium">
+                              <i className="ri-arrow-right-line"></i>
+                              <span>Cliquez pour voir les détails du projet</span>
+                            </div>
+                          </div>
                         </div>
                       ))}
                     

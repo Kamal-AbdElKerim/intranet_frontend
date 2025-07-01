@@ -30,13 +30,13 @@ const projectDetailsStyles = `
   
   @media (min-width: 640px) {
     .project-details-header {
-      padding: 1.5rem;
+      padding: 1rem;
     }
   }
   
   @media (min-width: 1024px) {
     .project-details-header {
-      padding: 2rem;
+      padding: 1rem;
     }
   }
   
@@ -962,6 +962,191 @@ const projectDetailsStyles = `
   .ms-1 {
     margin-left: 0.25rem;
   }
+
+  .progress-bar {
+    background: linear-gradient(90deg, #3b82f6 0%, #6366f1 100%);
+    transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  input[type="range"].accent-blue-500 {
+    accent-color: #3b82f6;
+    height: 4px;
+    border-radius: 2px;
+  }
+
+  input[type="range"].accent-blue-500::-webkit-slider-thumb {
+    width: 18px;
+    height: 18px;
+    background: #3b82f6;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 6px rgba(59,130,246,0.2);
+    cursor: pointer;
+  }
+
+  .task-status-edit-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    flex-direction: row;
+  }
+  @media (max-width: 480px) {
+    .task-status-edit-group {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+    }
+    .edit-status-btn {
+      margin-left: 0 !important;
+      margin-top: 0.25rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      font-size: 1.2rem;
+    }
+    .task-status {
+      min-width: 90px;
+      text-align: center;
+    }
+  }
+  .edit-status-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: #f3f4f6;
+    border: 1.5px solid #3b82f6;
+    color: #3b82f6;
+    margin-left: -0.5rem;
+    box-shadow: 0 2px 8px rgba(59,130,246,0.08);
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+    cursor: pointer;
+    font-size: 1.1rem;
+    z-index: 1;
+  }
+  .edit-status-btn:hover, .edit-status-btn:focus {
+    background: #3b82f6;
+    color: #fff;
+    transform: scale(1.08);
+    border-color: #2563eb;
+    outline: none;
+  }
+  .edit-status-btn:active {
+    transform: scale(0.98);
+  }
+
+  /* Hide on desktop, show on mobile */
+  .responsive-edit-btn {
+    display: none;
+  }
+  @media (max-width: 480px) {
+    .responsive-edit-btn {
+      display: flex;
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      left: auto;
+      z-index: 2;
+      background: #f3f4f6;
+      border: 1.5px solid #3b82f6;
+      color: #3b82f6;
+      width: 2.2rem;
+      height: 2.2rem;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(59,130,246,0.08);
+      font-size: 1.2rem;
+      transition: background 0.2s, color 0.2s, transform 0.2s;
+    }
+    .desktop-only {
+      display: none !important;
+    }
+    .task-item {
+      position: relative;
+    }
+  }
+  @media (min-width: 481px) {
+    .responsive-edit-btn {
+      display: none !important;
+    }
+    .desktop-only {
+      display: flex;
+    }
+  }
+
+  /* Add delete button styles */
+  .delete-status-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: #fee2e2;
+    border: 1.5px solid #ef4444;
+    color: #ef4444;
+    margin-left: 0.25rem;
+    box-shadow: 0 2px 8px rgba(239,68,68,0.08);
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+    cursor: pointer;
+    font-size: 1.1rem;
+    z-index: 1;
+  }
+  .delete-status-btn:hover, .delete-status-btn:focus {
+    background: #ef4444;
+    color: #fff;
+    transform: scale(1.08);
+    border-color: #b91c1c;
+    outline: none;
+  }
+  .delete-status-btn:active {
+    transform: scale(0.98);
+  }
+  @media (max-width: 480px) {
+    .responsive-delete-btn {
+      display: flex;
+      position: absolute;
+      top: 0.5rem;
+      right: 2.8rem;
+      z-index: 2;
+      background: #fee2e2;
+      border: 1.5px solid #ef4444;
+      color: #ef4444;
+      width: 2.2rem;
+      height: 2.2rem;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(239,68,68,0.08);
+      font-size: 1.2rem;
+      transition: background 0.2s, color 0.2s, transform 0.2s;
+    }
+    .desktop-delete-only {
+      display: none !important;
+    }
+  }
+  @media (min-width: 481px) {
+    .responsive-delete-btn {
+      display: none !important;
+    }
+    .desktop-delete-only {
+      display: flex;
+    }
+  }
+
+  /* Custom progress bar for Avancement */
+  .custom-progress-bar {
+    background: linear-gradient(90deg, #3b82f6 0%, #6366f1 100%);
+    height: 0.75rem;
+    border-radius: 9999px;
+    transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+  }
+  .dark .custom-progress-bar {
+    background: linear-gradient(90deg, #2563eb 0%, #6366f1 100%);
+  }
 `;
 
 const ProjectDetails = () => {
@@ -975,6 +1160,7 @@ const ProjectDetails = () => {
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [showMemberModal, setShowMemberModal] = useState(false);
   const [availableUsers, setAvailableUsers] = useState([]);
+  const [taskStatuses, setTaskStatuses] = useState([]);
   const [taskPagination, setTaskPagination] = useState({
     current: 1,
     total: 0,
@@ -992,14 +1178,13 @@ const ProjectDetails = () => {
     description: '',
     start_date: null,
     deadline: null,
-    priority: 'medium',
-    status: 'pending',
+    status_id: '',
     assigned_to: null,
     avancement: 0,
     moyens: '',
     pac: '',
     commentaire: '',
-    par_interim: false
+    par_interim: '',
   });
   
   // Validation errors state
@@ -1015,6 +1200,13 @@ const ProjectDetails = () => {
 
   // Member submit loading state
   const [memberSubmitLoading, setMemberSubmitLoading] = useState(false);
+
+  // Editing task state
+  const [editingTask, setEditingTask] = useState(null);
+
+  // Add state for delete modal
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState(null);
 
   // Prevent body scroll when modal is open
   useEffect(() => {
@@ -1033,7 +1225,8 @@ const ProjectDetails = () => {
   const fetchProject = async () => {
     try {
       setLoading(true);
-      const response = await axiosInstance.get(`/pmo/projects/${projectId}`);
+      const response = await axiosInstance.get(`/pmo/projects/${projectId}/getProject`);
+      console.log("response project", response.data);
       if (response.data?.status === 'success') {
         setProject(response.data.data);
       } else {
@@ -1114,11 +1307,40 @@ const ProjectDetails = () => {
     }
   };
 
+  // Fetch task statuses
+  const fetchTaskStatuses = async () => {
+    try {
+      const response = await axiosInstance.get('/pmo/task-statuses');
+      console.log('Task statuses response:', response.data);
+      if (response.data?.status === 'success') {
+        setTaskStatuses(response.data.data || []);
+      } else {
+        console.warn('Unexpected response format from task-statuses API');
+        setTaskStatuses([]);
+      }
+    } catch (error) {
+      console.error('Error fetching task statuses:', error);
+      ToastService.error('Erreur lors du chargement des statuts de tâches');
+      setTaskStatuses([]);
+    }
+  };
+
+  // Set default status_id when taskStatuses are loaded
+  useEffect(() => {
+    if (taskStatuses.length > 0 && !taskForm.status_id) {
+      setTaskForm(prev => ({
+        ...prev,
+        status_id: taskStatuses[0].id
+      }));
+    }
+  }, [taskStatuses]);
+
   useEffect(() => {
     if (project) {
       fetchTasks();
       fetchMembers();
       fetchAvailableUsers();
+      fetchTaskStatuses();
     }
   }, [project, taskPagination.current]);
 
@@ -1133,14 +1355,19 @@ const ProjectDetails = () => {
       errors.title = 'Le titre doit contenir au moins 3 caractères';
     }
 
+    // Date validation
+    if (!taskForm.start_date) {
+      errors.start_date = 'La date de début est requise';
+    }
+    if (!taskForm.deadline) {
+      errors.deadline = 'La date de fin est requise';
+    } else if (taskForm.start_date && taskForm.deadline < taskForm.start_date) {
+      errors.deadline = 'La date de fin doit être après la date de début';
+    }
+
     // Avancement validation
     if (taskForm.avancement < 0 || taskForm.avancement > 100) {
       errors.avancement = 'L\'avancement doit être entre 0 et 100%';
-    }
-
-    // Date validation
-    if (taskForm.start_date && taskForm.deadline && taskForm.start_date > taskForm.deadline) {
-      errors.deadline = 'La date de fin doit être après la date de début';
     }
 
     // PAC validation
@@ -1194,28 +1421,26 @@ const ProjectDetails = () => {
   // Handle task form submission
   const handleTaskSubmit = async (e) => {
     e.preventDefault();
-    
     // Clear previous errors
     setFormErrors({});
-    
     // Validate form
     if (!validateTaskForm()) {
       return;
     }
-    
     try {
       const response = await axiosInstance.post(`/pmo/projects/${projectId}/tasks`, {
-        ...taskForm,
+        title: taskForm.title,
+        description: taskForm.description,
         start_date: taskForm.start_date ? taskForm.start_date.toISOString().split('T')[0] : null,
         deadline: taskForm.deadline ? taskForm.deadline.toISOString().split('T')[0] : null,
+        status_id: taskForm.status_id,
         assigned_to: taskForm.assigned_to?.value || null,
-        avancement: parseInt(taskForm.avancement) || 0,
-        moyens: taskForm.moyens.trim(),
-        pac: taskForm.pac.trim(),
-        commentaire: taskForm.commentaire.trim(),
-        par_interim: taskForm.par_interim
+        prog_task: parseInt(taskForm.avancement) || 0,
+        project_id: projectId,
+        pac: taskForm.pac,
+        commentaire: taskForm.commentaire,
+        par_interim: taskForm.par_interim,
       });
-      
       if (response.data?.status === 'success') {
         ToastService.success('Tâche créée avec succès');
         setShowTaskModal(false);
@@ -1224,14 +1449,13 @@ const ProjectDetails = () => {
           description: '',
           start_date: null,
           deadline: null,
-          priority: 'medium',
-          status: 'pending',
+          status_id: taskStatuses.length > 0 ? taskStatuses[0].id : '',
           assigned_to: null,
           avancement: 0,
           moyens: '',
           pac: '',
           commentaire: '',
-          par_interim: false
+          par_interim: '',
         });
         setFormErrors({});
         // Reset pagination to first page and fetch tasks
@@ -1313,6 +1537,22 @@ const ProjectDetails = () => {
 
   // Get status color for tasks
   const getTaskStatusColor = (status) => {
+    // First try to find the status in our taskStatuses array
+    const statusObj = taskStatuses.find(s => s.key_name === status);
+    if (statusObj && statusObj.color) {
+      // Map color names to CSS classes
+      switch (statusObj.color.toLowerCase()) {
+        case 'red': return 'pending';
+        case 'yellow': return 'pending';
+        case 'orange': return 'pending';
+        case 'blue': return 'in-progress';
+        case 'green': return 'completed';
+        case 'purple': return 'in-progress';
+        default: return 'pending';
+      }
+    }
+    
+    // Fallback to old logic
     switch (status) {
       case 'to_do':
       case 'pending': return 'pending';
@@ -1325,6 +1565,13 @@ const ProjectDetails = () => {
 
   // Get status label for tasks
   const getTaskStatusLabel = (status) => {
+    // First try to find the status in our taskStatuses array
+    const statusObj = taskStatuses.find(s => s.key_name === status);
+    if (statusObj) {
+      return statusObj.title;
+    }
+    
+    // Fallback to old logic
     switch (status) {
       case 'to_do': return 'À faire';
       case 'pending': return 'En attente';
@@ -1408,6 +1655,64 @@ const ProjectDetails = () => {
       ))}
     </div>
   );
+
+  const handleTaskUpdate = async (e) => {
+    e.preventDefault();
+    setFormErrors({});
+    if (!validateTaskForm()) return;
+    try {
+      // Changed from `/pmo/projects/${projectId}/tasks/${editingTask.id}` to `/pmo/tasks/${editingTask.id}`
+      const response = await axiosInstance.put(`/pmo/tasks/${editingTask.id}`, {
+        title: taskForm.title,
+        description: taskForm.description,
+        start_date: taskForm.start_date ? taskForm.start_date.toISOString().split('T')[0] : null,
+        deadline: taskForm.deadline ? taskForm.deadline.toISOString().split('T')[0] : null,
+        status_id: taskForm.status_id,
+        assigned_to: taskForm.assigned_to?.value || null,
+        prog_task: parseInt(taskForm.avancement) || 0,
+        project_id: projectId,
+        pac: taskForm.pac,
+        commentaire: taskForm.commentaire,
+        par_interim: taskForm.par_interim,
+      });
+      if (response.data?.status === 'success') {
+        ToastService.success('Tâche mise à jour avec succès');
+        setShowTaskModal(false);
+        setEditingTask(null);
+        setTaskForm({
+          title: '',
+          description: '',
+          start_date: null,
+          deadline: null,
+          status_id: taskStatuses.length > 0 ? taskStatuses[0].id : '',
+          assigned_to: null,
+          avancement: 0,
+          moyens: '',
+          pac: '',
+          commentaire: '',
+          par_interim: '',
+        });
+        setFormErrors({});
+        setTaskPagination(prev => ({ ...prev, current: 1 }));
+        fetchTasks();
+      }
+    } catch (error) {
+      ToastService.error(error.response?.data?.message || 'Erreur lors de la mise à jour de la tâche');
+    }
+  };
+
+  // Add delete handler
+  const handleDeleteTask = async (taskId) => {
+    try {
+      await axiosInstance.delete(`/pmo/tasks/${taskId}`);
+      ToastService.success('Tâche supprimée avec succès');
+      setShowDeleteModal(false);
+      setTaskToDelete(null);
+      fetchTasks();
+    } catch (error) {
+      ToastService.error('Erreur lors de la suppression de la tâche');
+    }
+  };
 
   if (loading) {
     return (
@@ -1511,7 +1816,23 @@ const ProjectDetails = () => {
                   <div className="flex justify-between items-center mb-6">
                     <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Tâches du Projet</h3>
                     <button 
-                      onClick={() => setShowTaskModal(true)}
+                      onClick={() => {
+                        setEditingTask(null);
+                        setTaskForm({
+                          title: '',
+                          description: '',
+                          start_date: null,
+                          deadline: null,
+                          status_id: taskStatuses.length > 0 ? taskStatuses[0].id : '',
+                          assigned_to: null,
+                          avancement: 0,
+                          moyens: '',
+                          pac: '',
+                          commentaire: '',
+                          par_interim: '',
+                        });
+                        setShowTaskModal(true);
+                      }}
                       className="add-button"
                     >
                       <i className="ri-add-line"></i>
@@ -1525,11 +1846,94 @@ const ProjectDetails = () => {
                     <div className="space-y-4">
                       {tasks.map((task) => (
                         <div key={task.id} className="task-item">
+                          <button
+                            onClick={() => {
+                              setEditingTask(task);
+                              setTaskForm({
+                                title: task.title || '',
+                                description: task.description || '',
+                                start_date: task.start_date ? new Date(task.start_date) : null,
+                                deadline: task.deadline ? new Date(task.deadline) : null,
+                                status_id: task.status_id || (taskStatuses[0]?.id ?? ''),
+                                assigned_to: members.find(m => m.user_id === task.assigned_to)
+                                  ? {
+                                      value: task.assigned_to,
+                                      label: members.find(m => m.user_id === task.assigned_to)?.user?.full_name || 'Utilisateur inconnu'
+                                    }
+                                  : null,
+                                avancement: task.prog_task ?? 0,
+                                moyens: task.moyens || '',
+                                pac: task.pac || '',
+                                commentaire: task.commentaire || '',
+                                par_interim: task.par_interim || '',
+                              });
+                              setShowTaskModal(true);
+                            }}
+                            className="edit-status-btn responsive-edit-btn"
+                            title="Modifier la tâche"
+                            aria-label="Modifier la tâche"
+                          >
+                            <i className="ri-edit-line"></i>
+                          </button>
+                          <button
+                            onClick={() => { setShowDeleteModal(true); setTaskToDelete(task); }}
+                            className="delete-status-btn responsive-delete-btn"
+                            title="Supprimer la tâche"
+                            aria-label="Supprimer la tâche"
+                          >
+                            <i className="ri-delete-bin-line"></i>
+                          </button>
                           <div className="task-header">
                             <h4 className="task-title">{task.title}</h4>
-                            <span className={`task-status ${getTaskStatusColor(task.status)}`}>
-                              {getTaskStatusLabel(task.status)}
-                            </span>
+                            <div className="task-status-edit-group">
+                              <span
+                                className={`task-status me-3`}
+                                style={{
+                                  background: task.status_relation?.color || undefined,
+                                  color: '#fff',
+                                  border: task.status_relation?.color ? 'none' : undefined
+                                }}
+                              >
+                                {task.status_relation?.title || '-'}
+                              </span>
+                              {/* On desktop, show the button inline */}
+                              <button
+                                onClick={() => {
+                                  setEditingTask(task);
+                                  setTaskForm({
+                                    title: task.title || '',
+                                    description: task.description || '',
+                                    start_date: task.start_date ? new Date(task.start_date) : null,
+                                    deadline: task.deadline ? new Date(task.deadline) : null,
+                                    status_id: task.status_id || (taskStatuses[0]?.id ?? ''),
+                                    assigned_to: members.find(m => m.user_id === task.assigned_to)
+                                      ? {
+                                          value: task.assigned_to,
+                                          label: members.find(m => m.user_id === task.assigned_to)?.user?.full_name || 'Utilisateur inconnu'
+                                        }
+                                      : null,
+                                    avancement: task.prog_task ?? 0,
+                                    moyens: task.moyens || '',
+                                    pac: task.pac || '',
+                                    commentaire: task.commentaire || '',
+                                    par_interim: task.par_interim || '',
+                                  });
+                                  setShowTaskModal(true);
+                                }}
+                                className="edit-status-btn desktop-only"
+                                title="Modifier la tâche"
+                              >
+                                <i className="ri-edit-line"></i>
+                              </button>
+                              <button
+                                onClick={() => setShowDeleteModal(true) || setTaskToDelete(task)}
+                                className="delete-status-btn desktop-delete-only"
+                                title="Supprimer la tâche"
+                                aria-label="Supprimer la tâche"
+                              >
+                                <i className="ri-delete-bin-line"></i>
+                              </button>
+                            </div>
                           </div>
                           {task.description && (
                             <div 
@@ -1558,13 +1962,15 @@ const ProjectDetails = () => {
                                 Statut: {task.status_relation.name || task.status}
                               </span>
                             )}
-                            {task.prog_task && (
-                              <span>
+                            <div className="mt-2">
+                              <div className="custom-progress-bar" style={{ width: `${task.prog_task ?? 0}%` }}></div>
+                              <div className="text-xs text-gray-700 dark:text-gray-200 mt-1 flex items-center">
                                 <i className="ri-percent-line mr-1"></i>
-                                Avancement: {task.prog_task}%
-                              </span>
-                            )}
+                                Avancement: {task.prog_task ?? 0}%
+                              </div>
+                            </div>
                           </div>
+                     
                         </div>
                       ))}
                       
@@ -1660,8 +2066,12 @@ const ProjectDetails = () => {
                   <i className="ri-task-line"></i>
                 </div>
                 <div className="task-modal-header-text">
-                  <h2 className="task-modal-title">Ajouter une Tâche</h2>
-                  <p className="task-modal-subtitle">Créez une nouvelle tâche pour ce projet</p>
+                  <h2 className="task-modal-title">
+                    {editingTask ? 'Mettre à jour la Tâche' : 'Ajouter une Tâche'}
+                  </h2>
+                  <p className="task-modal-subtitle">
+                    {editingTask ? 'Modifier cette tâche du projet' : 'Créez une nouvelle tâche pour ce projet'}
+                  </p>
                 </div>
                 <button onClick={() => setShowTaskModal(false)} className="task-modal-close">
                   <i className="ri-close-line"></i>
@@ -1670,11 +2080,11 @@ const ProjectDetails = () => {
             </div>
 
             <div className="task-modal-body">
-              <form onSubmit={handleTaskSubmit} className="task-form">
+              <form onSubmit={editingTask ? handleTaskUpdate : handleTaskSubmit} className="task-form">
                 <div className="task-form-grid">
                   <div className="task-form-field">
                     <label className="task-form-label">
-                      Titre de la tâche
+                      Titre de la tâche <span className="Attention-text ms-1">*</span>
                     </label>
                     <input
                       type="text"
@@ -1702,62 +2112,86 @@ const ProjectDetails = () => {
                   <div className="task-form-row">
                     <div className="task-form-field">
                       <label className="task-form-label">
-                        Date de début
+                        Date de début <span className="Attention-text ms-1">*</span>
                       </label>
                       <DatePicker
                         selected={taskForm.start_date}
                         onChange={(date) => setTaskForm({...taskForm, start_date: date})}
-                        className="task-form-input"
+                        className={`task-form-input${formErrors.start_date ? ' input-error' : ''}`}
                         dateFormat="dd/MM/yyyy"
                         placeholderText="Sélectionner une date"
                       />
+                      {formErrors.start_date && (
+                        <div className="error-message">
+                          <i className="ri-error-warning-line error-icon"></i>
+                          <span className="error-text">{formErrors.start_date}</span>
+                        </div>
+                      )}
                     </div>
 
                     <div className="task-form-field">
                       <label className="task-form-label">
-                        Date de fin
+                        Date de fin <span className="Attention-text ms-1">*</span>
                       </label>
                       <DatePicker
                         selected={taskForm.deadline}
                         onChange={(date) => setTaskForm({...taskForm, deadline: date})}
-                        className={`task-form-input ${formErrors.deadline ? 'input-error' : ''}`}
+                        className={`task-form-input${formErrors.deadline ? ' input-error' : ''}`}
                         dateFormat="dd/MM/yyyy"
                         placeholderText="Sélectionner une date"
                         minDate={taskForm.start_date}
                       />
-                      {renderErrorMessage('deadline')}
+                      {formErrors.deadline && (
+                        <div className="error-message">
+                          <i className="ri-error-warning-line error-icon"></i>
+                          <span className="error-text">{formErrors.deadline}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
                   <div className="task-form-row">
                     <div className="task-form-field">
                       <label className="task-form-label">
-                        Priorité
-                      </label>
-                      <select
-                        value={taskForm.priority}
-                        onChange={(e) => setTaskForm({...taskForm, priority: e.target.value})}
-                        className="task-form-select"
-                      >
-                        <option value="low">Faible</option>
-                        <option value="medium">Moyenne</option>
-                        <option value="high">Élevée</option>
-                      </select>
-                    </div>
-
-                    <div className="task-form-field">
-                      <label className="task-form-label">
                         Statut
                       </label>
-                      <select
-                        value={taskForm.status}
-                        onChange={(e) => setTaskForm({...taskForm, status: e.target.value})}
-                        className="task-form-select"
-                      >
-                        <option value="pending">En attente</option>
-                        <option value="in_progress">En cours</option>
-                        <option value="completed">Terminé</option>
-                      </select>
+                      {taskStatuses.length > 0 ? (
+                        <select
+                          value={taskForm.status_id}
+                          onChange={(e) => setTaskForm({...taskForm, status_id: Number(e.target.value)})}
+                          className="task-form-select"
+                        >
+                          {taskStatuses.map((status) => (
+                            <option key={status.id} value={status.id}>
+                              {status.title}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <div className="text-sm text-orange-600 dark:text-orange-400 p-2 bg-orange-50 dark:bg-orange-900/20 rounded border border-orange-200 dark:border-orange-800">
+                          <i className="ri-information-line mr-1"></i>
+                          Chargement des statuts...
+                        </div>
+                      )}
+                    </div>
+                    <div className="task-form-field">
+                      <label className="task-form-label">
+                        Avancement <span className="text-xs text-gray-400">(%)</span>
+                      </label>
+                      <div className="flex items-center gap-4">
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={taskForm.avancement}
+                          onChange={(e) => setTaskForm({ ...taskForm, avancement: e.target.value })}
+                          className="w-full accent-blue-500"
+                        />
+                        <span className="font-semibold text-blue-600 dark:text-blue-400 min-w-[40px] text-right">
+                          {taskForm.avancement}%
+                        </span>
+                      </div>
+                      {renderErrorMessage('avancement')}
                     </div>
                   </div>
 
@@ -1788,75 +2222,61 @@ const ProjectDetails = () => {
                     )}
                   </div>
 
+                  {/* PAC as Oui/Non and Par intérim as text input */}
                   <div className="task-form-row">
+                    {/* PAC Oui/Non */}
                     <div className="task-form-field">
-                      <label className="task-form-label">
-                        Avancement (%)
-                      </label>
-                      <input
-                        type="number"
-                        value={taskForm.avancement}
-                        onChange={(e) => setTaskForm({...taskForm, avancement: e.target.value})}
-                        className={`task-form-input ${formErrors.avancement ? 'input-error' : ''}`}
-                        min="0"
-                        max="100"
-                        placeholder="0-100"
-                      />
-                      {renderErrorMessage('avancement')}
-                    </div>
-
-                    <div className="task-form-field">
-                      <label className="task-form-label">
-                        PAC
-                      </label>
-                      <input
-                        type="text"
-                        value={taskForm.pac}
-                        onChange={(e) => setTaskForm({...taskForm, pac: e.target.value})}
-                        className={`task-form-input ${formErrors.pac ? 'input-error' : ''}`}
-                        placeholder="Entrez le PAC"
-                      />
+                      <label className="task-form-label">PAC</label>
+                      <div className="flex items-center gap-4">
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name="pac"
+                            value="oui"
+                            checked={taskForm.pac === 'oui'}
+                            onChange={() => setTaskForm({ ...taskForm, pac: 'oui' })}
+                            className="task-form-checkbox"
+                          />
+                          <span className="ml-2">Oui</span>
+                        </label>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name="pac"
+                            value="non"
+                            checked={taskForm.pac === 'non'}
+                            onChange={() => setTaskForm({ ...taskForm, pac: 'non' })}
+                            className="task-form-checkbox"
+                          />
+                          <span className="ml-2">Non</span>
+                        </label>
+                      </div>
                       {renderErrorMessage('pac')}
                     </div>
+                    {/* Par intérim as text input */}
+                    <div className="task-form-field">
+                      <label className="task-form-label">Par intérim ?</label>
+                      <input
+                        type="text"
+                        value={taskForm.par_interim}
+                        onChange={(e) => setTaskForm({ ...taskForm, par_interim: e.target.value })}
+                        className="task-form-input"
+                        placeholder="Nom du remplaçant ou info"
+                      />
+                      {renderErrorMessage('par_interim')}
+                    </div>
                   </div>
-
-                  <div className="task-form-field">
-                    <label className="task-form-label">
-                      Moyens
-                    </label>
-                    <textarea
-                      value={taskForm.moyens}
-                      onChange={(e) => setTaskForm({...taskForm, moyens: e.target.value})}
-                      className={`task-form-textarea ${formErrors.moyens ? 'input-error' : ''}`}
-                      rows={3}
-                      placeholder="Décrivez les moyens nécessaires"
-                    />
-                    {renderErrorMessage('moyens')}
-                  </div>
-
                   <div className="task-form-field">
                     <label className="task-form-label">
                       Commentaire
                     </label>
                     <textarea
                       value={taskForm.commentaire}
-                      onChange={(e) => setTaskForm({...taskForm, commentaire: e.target.value})}
+                      onChange={(e) => setTaskForm({ ...taskForm, commentaire: e.target.value })}
                       className="task-form-textarea"
-                      rows={3}
-                      placeholder="Ajoutez un commentaire"
+                      rows={2}
+                      placeholder="Ajouter un commentaire (optionnel)"
                     />
-                  </div>
-
-                  <div className="task-form-field">
-                    <label className="task-form-checkbox-label">
-                      <input
-                        type="checkbox"
-                        checked={taskForm.par_interim}
-                        onChange={(e) => setTaskForm({...taskForm, par_interim: e.target.checked})}
-                        className="task-form-checkbox"
-                      />
-                      <span className="task-form-checkbox-text">Par intérim</span>
-                    </label>
                   </div>
                 </div>
               </form>
@@ -1874,11 +2294,11 @@ const ProjectDetails = () => {
                 </button>
                 <button
                   type="submit"
-                  onClick={handleTaskSubmit}
+                  onClick={editingTask ? handleTaskUpdate : handleTaskSubmit}
                   className="task-form-button task-form-button-primary"
                 >
-                  <i className="ri-check-line mr-2"></i>
-                  Créer la Tâche
+                  <i className={editingTask ? "ri-save-line mr-2" : "ri-check-line mr-2"}></i>
+                  {editingTask ? "Mettre à jour la Tâche" : "Créer la Tâche"}
                 </button>
               </div>
             </div>
@@ -2017,6 +2437,39 @@ const ProjectDetails = () => {
                       {memberSelections.length > 1 ? `Ajouter ${memberSelections.length} Membres` : 'Ajouter le Membre'}
                     </>
                   )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showDeleteModal && taskToDelete && (
+        <div className="task-modal-overlay" onClick={() => setShowDeleteModal(false)}>
+          <div className="task-modal-content max-w-sm" onClick={e => e.stopPropagation()}>
+            <div className="task-modal-header" style={{justifyContent:'center',textAlign:'center'}}>
+              <i className="ri-error-warning-line text-4xl text-red-500 mb-2"></i>
+              <h2 className="task-modal-title text-red-600">Confirmer la suppression</h2>
+              <p className="task-modal-subtitle text-gray-700 dark:text-gray-300">Voulez-vous vraiment supprimer la tâche <b>{taskToDelete.title}</b> ? Cette action est irréversible.</p>
+            </div>
+            <div className="task-modal-footer">
+              <div className="task-modal-footer-content justify-center">
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteModal(false)}
+                  className="task-form-button task-form-button-secondary"
+                >
+                  <i className="ri-close-line mr-2"></i>
+                  Annuler
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDeleteTask(taskToDelete.id)}
+                  className="task-form-button task-form-button-primary bg-red-600 hover:bg-red-700 border-red-700"
+                  style={{background:'#ef4444',borderColor:'#b91c1c'}}
+                >
+                  <i className="ri-delete-bin-line mr-2"></i>
+                  Supprimer
                 </button>
               </div>
             </div>
