@@ -14,6 +14,8 @@ import autoTable from 'jspdf-autotable';
 import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useAuth } from '../../../components/utile/AuthProvider.jsx';
+import RoleDropdown from '../../../components/ui/RoleDropdown.jsx';
 
 // Custom styles for range slider and select
 const rangeSliderStyles = `
@@ -1032,42 +1034,37 @@ const rangeSliderStyles = `
   .custom-select.project-type-select select { border-color: #8b5cf6; }
   .custom-select.project-type-select select:hover { border-color: #7c3aed; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15); }
   .custom-select.project-type-select select:focus { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1), 0 4px 12px rgba(124, 58, 237, 0.15); }
+  
+  .custom-select.creator-select select { border-color: #6366f1; }
+  .custom-select.creator-select select:hover { border-color: #4f46e5; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15); }
+  .custom-select.creator-select select:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1), 0 4px 12px rgba(99, 102, 241, 0.15); }
 
 .custom-link-blue {
   color: #2563eb; /* blue-600 */
 }
-.custom-link-blue:hover {
-  color: #1d4ed8; /* blue-700 */
-  text-decoration: underline;
-}
-.dark .custom-link-blue {
-  color: #60a5fa; /* blue-400 */
-}
-.dark .custom-link-blue:hover {
-  color: #3b82f6; /* blue-500 */
-}
+  .custom-link-blue:hover {
+    color: #1d4ed8; /* blue-700 */
+    text-decoration: underline;
+  }
+  .dark .custom-link-blue {
+    color: #60a5fa; /* blue-400 */
+  }
+  .dark .custom-link-blue:hover {
+    color: #3b82f6; /* blue-500 */
+  }
 
-.badge.status-badge {
-  font-weight: 600;
-  font-size: 0.85em;
-  padding: 0.4em 1.1em;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5em;
-}
+  .badge.status-badge {
+    font-weight: 600;
+    font-size: 0.85em;
+    padding: 0.4em 1.1em;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+  }
 `;
 
-const statusOptions = [
-  { value: 'open', label: 'Ouvert', icon: 'ri-checkbox-circle-line', color: 'emerald', customColor: '#12c60c' },
-  { value: 'planned', label: 'Planifié', icon: 'ri-calendar-line', color: 'blue', customColor: '#1e90ff' },
-  { value: 'completed', label: 'Terminé', icon: 'ri-check-double-line', color: 'green', customColor: '#0cbf4d' },
-  { value: 'hold', label: 'En attente', icon: 'ri-pause-circle-line', color: 'yellow', customColor: '#f5b849' },
-  { value: 'canceled', label: 'Annulé', icon: 'ri-close-circle-line', color: 'red', customColor: '#e6533c' },
-  { value: 'not_started', label: 'Non commencé', icon: 'ri-time-line', color: 'gray', customColor: '#6b7280' },
-  { value: 'continuous_action', label: 'Action continue', icon: 'ri-refresh-line', color: 'purple', customColor: '#a259e6' },
-  { value: 'archived', label: 'Archivé', icon: 'ri-archive-line', color: 'slate', customColor: '#64748b' },
-];
+
 
 // React Select options
 const getClientOptions = (formOptions) => {
@@ -1102,13 +1099,7 @@ const getStatusOptions = (formOptions) => {
   return formOptions.statuses || [];
 };
 
-// Progress options (0-100 in steps of 5)
-const getProgressOptions = () => {
-  return Array.from({ length: 21 }, (_, i) => i * 5).map(value => ({
-    value: value,
-    label: `${value}%`
-  }));
-};
+
 
 // Get label suggestions from API
 const getLabelSuggestions = (formOptions) => {
@@ -1139,24 +1130,7 @@ const formatDate = (dateString, simple = false) => {
   return `${day} ${month} ${year} à ${hours}:${minutes}`;
 };
 
-// Helper function to format date for HTML date input (YYYY-MM-DD)
-const formatDateForInput = (dateString) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) return '';
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
 
-// Poids range indicator with slider
-const getPoidsRange = (poids) => {
-  if (poids <= 20) return { label: 'Faible', color: '#26bf94', bgColor: 'rgba(38, 191, 148, 0.1)', textColor: '#26bf94' };
-  if (poids <= 50) return { label: 'Moyen', color: '#f5b849', bgColor: 'rgba(245, 184, 73, 0.1)', textColor: '#f5b849' };
-  if (poids <= 80) return { label: 'Élevé', color: '#ffa505', bgColor: 'rgba(255, 165, 5, 0.1)', textColor: '#ffa505' };
-  return { label: 'Critique', color: '#e6533c', bgColor: 'rgba(230, 83, 60, 0.1)', textColor: '#e6533c' };
-};
 
 // Add this helper function before the Projects component
 const getStatusBadgeClass = (status) => {
@@ -1184,6 +1158,7 @@ const Projects = () => {
   const [statusFilter, setStatusFilter] = useState('');
   const [yearFilter, setYearFilter] = useState('');
   const [projectTypeFilter, setProjectTypeFilter] = useState('');
+  const [creatorFilter, setCreatorFilter] = useState('');
   const [sortConfig, setSortConfig] = useState({ key: 'created_date', direction: 'desc' });
   const [pagination, setPagination] = useState({
     current: 1,
@@ -1231,10 +1206,18 @@ const Projects = () => {
   // 1. Add state for view modal
   const [viewProject, setViewProject] = useState(null);
   const [years, setYears] = useState([]);
+  // Add state for role view
+  const [roleView, setRoleView] = useState('admin');
   const navigate = useNavigate();
 
+  const { user } = useAuth();
+
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
+
   // Fetch projects
-  const fetchProjects = async (page = 1, search = '', status = '', year = '', projectType = '') => {
+  const fetchProjects = async (page = 1, search = '', status = '', year = '', projectType = '', creator = '', customRoleView = null) => {
     try {
       setLoading(true);
       const queryParams = new URLSearchParams({
@@ -1245,9 +1228,13 @@ const Projects = () => {
         sort_direction: sortConfig.direction || 'desc',
         status: status || '',
         year: year || '',
-        project_type_id: projectType || ''
+        project_type_id: projectType || '',
+        creator_filter: creator || '',
+        role_view: customRoleView || roleView || 'all'
       }).toString();
       const response = await axiosInstance.get(`/pmo/projects?${queryParams}`);
+      console.log('projects',response.data);
+      
       if (response.data?.status === 'success' && response.data?.data) {
         console.log(response.data.data);
         const { data, current_page, per_page, total, last_page } = response.data.data;
@@ -1311,11 +1298,11 @@ const Projects = () => {
   };
 
   useEffect(() => {
-    fetchProjects(1, '', '', '', '');
+    fetchProjects(1, '', '', '', '', '', roleView);
     fetchFormOptions();
     fetchYears();
     // eslint-disable-next-line
-  }, []);
+  }, [roleView]);
 
   // Prevent background scrolling when modal is open
   useEffect(() => {
@@ -1331,18 +1318,14 @@ const Projects = () => {
     };
   }, [showModal, projectToDelete, viewProject]);
 
-  // Handle modal backdrop click
-  const handleModalBackdropClick = (e) => {
-    if (e.target === e.currentTarget) {
-      setShowModal(false);
-      setProjectToDelete(null);
-    }
-  };
+  useEffect(() => {
+    console.log('Saving role view to localStorage:', roleView);
+    localStorage.setItem('pmo_role_view', roleView);
+  }, [roleView]);
 
-  // Prevent modal content click from closing modal
-  const handleModalContentClick = (e) => {
-    e.stopPropagation();
-  };
+
+
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -1387,10 +1370,10 @@ const Projects = () => {
       newErrors.id_entite = 'L\'entité est requise';
     }
     
-    // Objective validation
-    if (!formData.id_objectif || formData.id_objectif === '') {
-      newErrors.id_objectif = 'L\'objectif est requis';
-    }
+    // Objective validation - removed as requested
+    // if (!formData.id_objectif || formData.id_objectif === '') {
+    //   newErrors.id_objectif = 'L\'objectif est requis';
+    // }
     
     // Project type validation
     if (!formData.project_type || formData.project_type === '') {
@@ -1507,7 +1490,7 @@ const Projects = () => {
         // Add a small delay to ensure backend has processed the update
         setTimeout(() => {
           console.log('Refreshing data...');
-          fetchProjects(pagination.current, searchTerm, statusFilter, yearFilter, projectTypeFilter);
+          fetchProjects(pagination.current, searchTerm, statusFilter, yearFilter, projectTypeFilter, creatorFilter, roleView);
         }, 500);
       } else {
         console.error('Response not successful:', response.data);
@@ -1523,37 +1506,42 @@ const Projects = () => {
   };
 
   const handlePageChange = (page) => {
-    fetchProjects(page, searchTerm, statusFilter, yearFilter, projectTypeFilter);
+    fetchProjects(page, searchTerm, statusFilter, yearFilter, projectTypeFilter, creatorFilter, roleView);
   };
 
   const handleSort = (key) => {
     const direction = sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
     setSortConfig({ key, direction });
-    fetchProjects(1, searchTerm, statusFilter, yearFilter, projectTypeFilter);
+    fetchProjects(1, searchTerm, statusFilter, yearFilter, projectTypeFilter, creatorFilter, roleView);
   };
 
   const handleSearch = () => {
-    fetchProjects(1, searchTerm, statusFilter, yearFilter, projectTypeFilter);
+    fetchProjects(1, searchTerm, statusFilter, yearFilter, projectTypeFilter, creatorFilter, roleView);
   };
 
   const handleClearSearch = () => {
     setSearchTerm('');
-    fetchProjects(1, '', statusFilter, yearFilter, projectTypeFilter);
+    fetchProjects(1, '', statusFilter, yearFilter, projectTypeFilter, creatorFilter, roleView);
   };
 
   const handleStatusFilter = (status) => {
     setStatusFilter(status);
-    fetchProjects(1, searchTerm, status, yearFilter, projectTypeFilter);
+    fetchProjects(1, searchTerm, status, yearFilter, projectTypeFilter, creatorFilter, roleView);
   };
 
   const handleYearFilter = (year) => {
     setYearFilter(year);
-    fetchProjects(1, searchTerm, statusFilter, year, projectTypeFilter);
+    fetchProjects(1, searchTerm, statusFilter, year, projectTypeFilter, creatorFilter, roleView);
   };
 
   const handleProjectTypeFilter = (projectType) => {
     setProjectTypeFilter(projectType);
-    fetchProjects(1, searchTerm, statusFilter, yearFilter, projectType);
+    fetchProjects(1, searchTerm, statusFilter, yearFilter, projectType, creatorFilter, roleView);
+  };
+
+  const handleCreatorFilter = (creator) => {
+    setCreatorFilter(creator);
+    fetchProjects(1, searchTerm, statusFilter, yearFilter, projectTypeFilter, creator, roleView);
   };
 
   const handleClearFilters = () => {
@@ -1561,7 +1549,8 @@ const Projects = () => {
     setStatusFilter('');
     setYearFilter('');
     setProjectTypeFilter('');
-    fetchProjects(1, '', '', '', '');
+    setCreatorFilter('');
+    fetchProjects(1, '', '', '', '', '', roleView);
   };
 
   const handleAddProject = () => {
@@ -1632,7 +1621,7 @@ const Projects = () => {
       if (response.data?.status === 'success') {
         ToastService.success('Projet supprimé avec succès');
         setProjectToDelete(null);
-        fetchProjects(pagination.current, searchTerm, statusFilter, yearFilter, projectTypeFilter);
+        fetchProjects(pagination.current, searchTerm, statusFilter, yearFilter, projectTypeFilter, creatorFilter, roleView);
       } else {
         ToastService.error(response.data?.message || 'Erreur lors de la suppression');
       }
@@ -1655,10 +1644,13 @@ const Projects = () => {
         status: statusFilter || '',
         year: yearFilter || '',
         project_type_id: projectTypeFilter || '',
+        creator_filter: creatorFilter || '',
+        role_view: roleView || 'all',
         export: 'true',
         include_tasks: 'true'
       }).toString();
       const response = await axiosInstance.get(`/pmo/projects?${queryParams}`);
+      console.log('projject' , response.data);
       if (response.data?.status !== 'success' || !response.data?.data?.data) {
         throw new Error('Erreur lors de la récupération des données');
       }
@@ -1710,6 +1702,18 @@ const Projects = () => {
           let projectRowCount = 0;
           if (project.tasks && project.tasks.length > 0) {
             project.tasks.forEach((task, idx) => {
+              let responsibleName = '-';
+              if (task.assigned_user) {
+                responsibleName = `${task.assigned_user.first_name || ''} ${task.assigned_user.last_name || ''}`.trim();
+              } else if (task.assigned_to && typeof task.assigned_to === 'object') {
+                responsibleName = `${task.assigned_to.first_name || ''} ${task.assigned_to.last_name || ''}`.trim();
+              } else if (task.assigned_to) {
+                if (typeof task.assigned_to === 'string' || typeof task.assigned_to === 'number') {
+                  responsibleName = 'Utilisateur supprimé';
+                } else {
+                  responsibleName = '-';
+                }
+              }
               aoa.push([
                 '', // Objectif (filled later)
                 idx === 0 ? project.title || '' : '',
@@ -1718,10 +1722,7 @@ const Projects = () => {
                 idx === 0 ? (project.entite?.company_name || '') : '',
                 idx === 0 ? projectYear : '',
                 idx === 0 ? (project.client?.company_name || '') : '',
-                // Responsable: use assigned_user full name if available, else assigned_to
-                task.assigned_user
-                  ? `${task.assigned_user.first_name || ''} ${task.assigned_user.last_name || ''}`.trim()
-                  : (task.assigned_to ? task.assigned_to : ''),
+                responsibleName,
                 idx === 0 ? (project.start_date ? formatDate(project.start_date, true) : '') : '',
                 idx === 0 ? (project.deadline ? formatDate(project.deadline, true) : '') : '',
                 idx === 0 ? statusLabel : '',
@@ -1834,11 +1835,15 @@ const Projects = () => {
         status: statusFilter || '',
         year: yearFilter || '',
         project_type_id: projectTypeFilter || '',
+        creator_filter: creatorFilter || '',
+        role_view: roleView || 'all',
         export: 'true', // Flag to indicate this is for export
         include_tasks: 'true' // Include tasks data
       }).toString();
       
       const response = await axiosInstance.get(`/pmo/projects?${queryParams}`);
+     
+      
       
       if (response.data?.status !== 'success' || !response.data?.data?.data) {
         throw new Error('Erreur lors de la récupération des données');
@@ -1890,10 +1895,18 @@ const Projects = () => {
           if (project.tasks && project.tasks.length > 0) {
             // Add tasks for this project
             project.tasks.forEach((task, taskIndex) => {
-              const responsibleName = task.assigned_user
-                ? `${task.assigned_user.first_name || ''} ${task.assigned_user.last_name || ''}`.trim()
-                : (task.assigned_to ? task.assigned_to : '');
-              
+              let responsibleName = '-';
+              if (task.assigned_user) {
+                responsibleName = `${task.assigned_user.first_name || ''} ${task.assigned_user.last_name || ''}`.trim();
+              } else if (task.assigned_to && typeof task.assigned_to === 'object') {
+                responsibleName = `${task.assigned_to.first_name || ''} ${task.assigned_to.last_name || ''}`.trim();
+              } else if (task.assigned_to) {
+                if (typeof task.assigned_to === 'string' || typeof task.assigned_to === 'number') {
+                  responsibleName = 'Utilisateur supprimé';
+                } else {
+                  responsibleName = '-';
+                }
+              }
               tableData.push([
                 objective?.titre || '-',
                 project.title || '-',
@@ -2014,19 +2027,29 @@ const Projects = () => {
         <div className="xl:col-span-12 col-span-12">
           <div className="box custom-box">
             <div className="box-header flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-              <div className="flex flex-col sm:flex-row items-center justify-between w-full gap-4">
+                              <div className="flex flex-col sm:flex-row items-center justify-between w-full gap-4">
                 <div className="box-title text-xl font-semibold text-gray-800 dark:text-white">
                   Gestion des Projects
                 </div>
                 <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
                       {/* Export Buttons */}
                       <div className="flex items-center gap-3">
+
+                             {/* Role Information Button */}
+                      <RoleDropdown
+                        fetchProjects={fetchProjects}
+                        searchTerm={searchTerm}
+                        statusFilter={statusFilter}
+                        yearFilter={yearFilter}
+                        projectTypeFilter={projectTypeFilter}
+                        onRoleViewChange={setRoleView}
+                      />
                       {/* Excel Export Button */}
                       <button
                         onClick={handleExportExcel}
-                        disabled={loading || projects.length === 0 || exportingExcel}
+                        disabled={loading || projects.length === 0 || exportingExcel }
                         className="relative flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 disabled:from-emerald-300 disabled:to-emerald-400 text-white rounded-xl font-semibold text-sm transition-all duration-300 shadow-lg hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50 group overflow-hidden"
-                        title="Exporter vers Excel"
+                        title={ "Exporter vers Excel"}
                       >
                         {/* Loading spinner */}
                         {exportingExcel && (
@@ -2048,9 +2071,9 @@ const Projects = () => {
                       {/* PDF Export Button */}
                       <button
                         onClick={handleExportPDF}
-                        disabled={loading || projects.length === 0 || exportingPDF}
+                        disabled={loading || projects.length === 0 || exportingPDF }
                         className="relative flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 disabled:from-red-300 disabled:to-red-400 text-white rounded-xl font-semibold text-sm transition-all duration-300 shadow-lg hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50 group overflow-hidden"
-                        title="Télécharger PDF" 
+                        title={"Télécharger PDF"} 
                         style={{
                           background: 'rgb(129 22 22 / 96%)',
                         }}
@@ -2071,6 +2094,8 @@ const Projects = () => {
                         {/* Shine effect */}
                         <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:translate-x-full transition-transform duration-1000"></div>
                       </button>
+
+                 
                       
                       {/* Export Info Tooltip */}
                       {/* {(projects.length > 0) && (
@@ -2083,12 +2108,15 @@ const Projects = () => {
                   <button
                     onClick={handleAddProject}
                     className="ti-btn ti-btn-primary-full ti-btn-wave"
+                    title={"Ajouter un nouveau projet"}
                   >
                     <i className="ri-add-line me-2"></i>
                     Ajouter un Project
                   </button>
                 </div>
               </div>
+              
+
               
               {/* Filters Section */}
               <div className="w-full mt-5 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 border border-blue-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
@@ -2198,6 +2226,27 @@ const Projects = () => {
                       </div>
                     </div>
 
+                    {/* Creator Filter - Only show in Chef view */}
+                    {/* {roleView === 'chef' && (
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 min-w-[180px]">
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                          <i className="ri-user-line mr-1 text-indigo-500"></i>
+                          Créateur
+                        </label>
+                        <div className="custom-select creator-select">
+                          <select
+                            value={creatorFilter}
+                            onChange={(e) => handleCreatorFilter(e.target.value)}
+                            className="custom-select select"
+                          >
+                            <option value="">Tous les créateurs</option>
+                            <option value="my">Mes projets</option>
+                            <option value="others">Autres projets</option>
+                          </select>
+                        </div>
+                      </div>
+                    )} */}
+
              
                     
              
@@ -2216,14 +2265,14 @@ const Projects = () => {
                 </div>
                 
                 {/* Active Filters Indicator */}
-                {(statusFilter || yearFilter || projectTypeFilter || searchTerm) && (
+                {(statusFilter || yearFilter || projectTypeFilter || searchTerm || creatorFilter) && (
                   <div className="mt-4 pt-4 border-t border-blue-200 dark:border-gray-700">
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-info-700 dark:text-info-300 rounded-full text-sm font-medium">
                         <i className="ri-check-line"></i>
                         <span>Filtres actifs:</span>
                         <span className="bg-blue-200 dark:bg-blue-800 text-info-800 dark:text-info-200 px-2 py-0.5 rounded-full text-xs">
-                          {[statusFilter, yearFilter, projectTypeFilter, searchTerm].filter(Boolean).length}
+                          {[statusFilter, yearFilter, projectTypeFilter, searchTerm, creatorFilter].filter(Boolean).length}
                         </span>
                       </div>
                       <div className="flex flex-wrap gap-2">
@@ -2251,6 +2300,12 @@ const Projects = () => {
                             {getProjectTypeOptions(formOptions).find(opt => opt.value === projectTypeFilter)?.label || projectTypeFilter}
                           </span>
                         )}
+                        {creatorFilter && (
+                          <span className="inline-flex items-center gap-1 px-2 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-md text-xs">
+                            <i className="ri-user-line"></i>
+                            {creatorFilter === 'my' ? 'Mes projets' : creatorFilter === 'others' ? 'Autres projets' : creatorFilter}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -2273,12 +2328,55 @@ const Projects = () => {
                             <span className="font-medium">Total Projects:</span>
                             <span className="font-bold">{pagination.total}</span>
                           </div>
-                          {(statusFilter || yearFilter || projectTypeFilter || searchTerm) && (
+                          
+                          {/* Role View Indicator */}
+                          {roleView !== 'admin' && (
+                            <div className={`flex items-center gap-2 px-3 py-1 rounded-lg text-sm ${
+                              roleView === 'chef' 
+                                ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300'
+                                : 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300'
+                            }`}>
+                              <i className={`${
+                                roleView === 'chef' 
+                                  ? 'ri-user-star-line'
+                                  : 'ri-user-star-line'
+                              }`}></i>
+                              <span>
+                                {roleView === 'chef' 
+                                  ? 'Vue Chef'
+                                  : 'Vue Directeur'
+                                }
+                              </span>
+                            </div>
+                          )}
+                          
+                          {(statusFilter || yearFilter || projectTypeFilter || searchTerm || creatorFilter) && (
                             <div className="flex items-center gap-2 px-3 py-1 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 rounded-lg text-sm">
                               <i className="ri-filter-line"></i>
                               <span>Filtres actifs</span>
                               <span className="bg-amber-200 dark:bg-amber-800 text-amber-800 dark:text-amber-200 px-2 py-0.5 rounded-full text-xs font-medium">
-                                {[statusFilter, yearFilter, projectTypeFilter, searchTerm].filter(Boolean).length}
+                                {[statusFilter, yearFilter, projectTypeFilter, searchTerm, creatorFilter].filter(Boolean).length}
+                              </span>
+                            </div>
+                          )}
+                          
+                          {/* Role View Indicator */}
+                          {roleView !== 'admin' && (
+                            <div className={`flex items-center gap-2 px-3 py-1 rounded-lg text-sm ${
+                              roleView === 'chef' 
+                                ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300'
+                                : 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300'
+                            }`}>
+                              <i className={`${
+                                roleView === 'chef' 
+                                  ? 'ri-user-star-line'
+                                  : 'ri-user-star-line'
+                              }`}></i>
+                              <span>
+                                {roleView === 'chef' 
+                                  ? (creatorFilter === 'my' ? 'Vue Chef' : 'Vue Standard')
+                                  : 'Vue Directeur'
+                                }
                               </span>
                             </div>
                           )}
@@ -2414,21 +2512,26 @@ const Projects = () => {
                                         >
                                           <i className="ri-eye-line"></i>
                                         </button>
-                                        <button
-                                          onClick={() => handleUpdate(project)}
-                                          className="ti-btn ti-btn-icon ti-btn-primary-full ti-btn-wave"
-                                          title="Modifier le projet"
-                                        >
-                                          <i className="ri-pencil-line"></i>
-                                        </button>
-                                        <button
-                                          onClick={() => handleDelete(project)}
-                                          className="ti-btn ti-btn-icon ti-btn-danger-full ti-btn-wave"
-                                          title="Supprimer le projet"
-                                        >
-                                          <i className="ri-delete-bin-line"></i>
-                                        </button>
-                                    
+                                        {/* { (( user?.data?.id === project.creator?.id) || (roleView === 'admin' && isAdmin) || (roleView === 'directeur' && isDirecteurGeneral)) && ( */}
+                                        { (( user?.data?.id === project.creator?.id) ) && (
+                                          <>
+                                            <button
+                                              onClick={() => handleUpdate(project)}
+                                              className="ti-btn ti-btn-icon ti-btn-primary-full ti-btn-wave"
+                                              title="Modifier le projet"
+                                            >
+                                              <i className="ri-pencil-line"></i>
+                                            </button>
+                                            <button
+                                              onClick={() => handleDelete(project)}
+                                              className="ti-btn ti-btn-icon ti-btn-danger-full ti-btn-wave"
+                                              title="Supprimer le projet"
+                                            >
+                                              <i className="ri-delete-bin-line"></i>
+                                            </button>
+                                          </>
+                                        )}
+
                                       </div>
                                     </td>
                                   </tr>
@@ -2586,7 +2689,7 @@ const Projects = () => {
 
                     <div className="project-form-field">
                       <label className="project-form-label">
-                        Objectif <span className="project-form-required">*</span>
+                        Objectif
                       </label>
                       <Select
                         options={getObjectiveOptions(formOptions)}
@@ -3215,6 +3318,5 @@ const Projects = () => {
       )}
     </Fragment>
   );
-};
+};export default Projects; 
 
-export default Projects; 

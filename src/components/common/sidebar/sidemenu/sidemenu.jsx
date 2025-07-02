@@ -92,8 +92,16 @@ export const MENUITEMS = [
     dirchange: false,
     active: false,
     title: "Projects",
+  },
+  {
+    path: `${import.meta.env.BASE_URL}Pmo/Dashboard`,
+    icon: (<i className="mdi mdi-chart-box side-menu__icon mb-2"></i>),
+    type: "link",
+    selected: false,
+    dirchange: false,
+    active: false,
+    title: "Dashboard",
   }
-  
 
   // {
   //   path: `${import.meta.env.BASE_URL}DemandesAdministratives/admin/Users`,

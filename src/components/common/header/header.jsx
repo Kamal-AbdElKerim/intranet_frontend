@@ -23,6 +23,9 @@ const Header = ({ local_varaiable, ThemeChanger }) => {
     return user?.data?.roles?.some(role => role.name === "Admin RH");
   };
 
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
 
 
   const toggleFullScreen = () => {

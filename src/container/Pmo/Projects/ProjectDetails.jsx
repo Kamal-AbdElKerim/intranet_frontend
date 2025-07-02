@@ -8,6 +8,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Pageheader from '../../../components/common/pageheader/pageheader.jsx';
 import CustomPagination from '../../../components/utile/CustomPagination.jsx';
+import { useAuth } from '../../../components/utile/AuthProvider.jsx';
 
 // Custom styles for the project details page
 const projectDetailsStyles = `
@@ -1186,6 +1187,13 @@ const ProjectDetails = () => {
     commentaire: '',
     par_interim: '',
   });
+
+  const { user } = useAuth();
+
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
+
   
   // Validation errors state
   const [formErrors, setFormErrors] = useState({});
@@ -1801,8 +1809,13 @@ const ProjectDetails = () => {
                 Tâches / Sous action
               </button>
               <button
-                className={`project-details-tab ${activeTab === 'members' ? 'active' : ''}`}
-                onClick={() => setActiveTab('members')}
+                className={`project-details-tab ${activeTab === 'members' ? 'active' : ''} ${user?.data?.id !== project.creator?.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                onClick={() => {
+                  if (user?.data?.id === project.creator?.id) setActiveTab('members');
+                }}
+                disabled={user?.data?.id !== project.creator?.id}
+                title={user?.data?.id !== project.creator?.id ? 'Seul le créateur du projet peut voir les membres' : ''}
+                aria-disabled={user?.data?.id !== project.creator?.id}
               >
                 <i className="ri-team-line mr-2"></i>
                 Les membres du Projet
@@ -1833,7 +1846,9 @@ const ProjectDetails = () => {
                         });
                         setShowTaskModal(true);
                       }}
-                      className="add-button"
+                      className={`add-button${user?.data?.id !== project.creator?.id ? ' opacity-50 cursor-not-allowed' : ''}`}
+                      disabled={user?.data?.id !== project.creator?.id}
+                      title={user?.data?.id !== project.creator?.id ? 'Seul le créateur du projet peut ajouter une tâche' : ''}
                     >
                       <i className="ri-add-line"></i>
                       Ajouter une Tâche
@@ -1846,6 +1861,7 @@ const ProjectDetails = () => {
                     <div className="space-y-4">
                       {tasks.map((task) => (
                         <div key={task.id} className="task-item">
+                          {(user?.data?.id === project.creator?.id || user?.data?.id === task.assigned_to) && (
                           <button
                             onClick={() => {
                               setEditingTask(task);
@@ -1873,16 +1889,20 @@ const ProjectDetails = () => {
                             title="Modifier la tâche"
                             aria-label="Modifier la tâche"
                           >
-                            <i className="ri-edit-line"></i>
+                          
+                              <i className="ri-edit-line"></i>
                           </button>
-                          <button
-                            onClick={() => { setShowDeleteModal(true); setTaskToDelete(task); }}
-                            className="delete-status-btn responsive-delete-btn"
-                            title="Supprimer la tâche"
-                            aria-label="Supprimer la tâche"
-                          >
-                            <i className="ri-delete-bin-line"></i>
-                          </button>
+                            )}
+                          {user?.data?.id === project.creator?.id && (
+                            <button
+                              onClick={() => { setShowDeleteModal(true); setTaskToDelete(task); }}
+                              className="delete-status-btn responsive-delete-btn"
+                              title="Supprimer la tâche"
+                              aria-label="Supprimer la tâche"
+                            >
+                              <i className="ri-delete-bin-line"></i>
+                            </button>
+                          )}
                           <div className="task-header">
                             <h4 className="task-title">{task.title}</h4>
                             <div className="task-status-edit-group">
@@ -1897,6 +1917,7 @@ const ProjectDetails = () => {
                                 {task.status_relation?.title || '-'}
                               </span>
                               {/* On desktop, show the button inline */}
+                                {(user?.data?.id === project.creator?.id || user?.data?.id === task.assigned_to) && (
                               <button
                                 onClick={() => {
                                   setEditingTask(task);
@@ -1923,16 +1944,20 @@ const ProjectDetails = () => {
                                 className="edit-status-btn desktop-only"
                                 title="Modifier la tâche"
                               >
-                                <i className="ri-edit-line"></i>
+                              
+                                  <i className="ri-edit-line"></i>
                               </button>
-                              <button
-                                onClick={() => setShowDeleteModal(true) || setTaskToDelete(task)}
-                                className="delete-status-btn desktop-delete-only"
-                                title="Supprimer la tâche"
-                                aria-label="Supprimer la tâche"
-                              >
-                                <i className="ri-delete-bin-line"></i>
-                              </button>
+                                )}
+                              {user?.data?.id === project.creator?.id && (
+                                <button
+                                  onClick={() => setShowDeleteModal(true) || setTaskToDelete(task)}
+                                  className="delete-status-btn desktop-delete-only"
+                                  title="Supprimer la tâche"
+                                  aria-label="Supprimer la tâche"
+                                >
+                                  <i className="ri-delete-bin-line"></i>
+                                </button>
+                              )}
                             </div>
                           </div>
                           {task.description && (
@@ -1997,7 +2022,7 @@ const ProjectDetails = () => {
                 </div>
               )}
 
-              {activeTab === 'members' && (
+              {activeTab === 'members' && user?.data?.id === project.creator?.id && (
                 <div>
                   <div className="flex justify-between items-center mb-6">
                     <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Membres du Projet</h3>
@@ -2051,6 +2076,12 @@ const ProjectDetails = () => {
                   )}
                 </div>
               )}
+              {activeTab === 'members' && user?.data?.id !== project.creator?.id && (
+                <div className="text-center text-gray-500 dark:text-gray-400 py-8">
+                  <i className="ri-lock-line text-4xl mb-4 opacity-50"></i>
+                  <p>Seul le créateur du projet peut voir et gérer les membres de ce projet.</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -2081,204 +2112,374 @@ const ProjectDetails = () => {
 
             <div className="task-modal-body">
               <form onSubmit={editingTask ? handleTaskUpdate : handleTaskSubmit} className="task-form">
-                <div className="task-form-grid">
-                  <div className="task-form-field">
-                    <label className="task-form-label">
-                      Titre de la tâche <span className="Attention-text ms-1">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={taskForm.title}
-                      onChange={(e) => setTaskForm({...taskForm, title: e.target.value})}
-                      className={`task-form-input ${formErrors.title ? 'input-error' : ''}`}
-                      placeholder="Entrez le titre de la tâche"
-                    />
-                    {renderErrorMessage('title')}
-                  </div>
-
-                  <div className="task-form-field">
-                    <label className="task-form-label">
-                      Description
-                    </label>
-                    <textarea
-                      value={taskForm.description}
-                      onChange={(e) => setTaskForm({...taskForm, description: e.target.value})}
-                      className="task-form-textarea"
-                      rows={3}
-                      placeholder="Décrivez la tâche"
-                    />
-                  </div>
-
-                  <div className="task-form-row">
-                    <div className="task-form-field">
-                      <label className="task-form-label">
-                        Date de début <span className="Attention-text ms-1">*</span>
-                      </label>
-                      <DatePicker
-                        selected={taskForm.start_date}
-                        onChange={(date) => setTaskForm({...taskForm, start_date: date})}
-                        className={`task-form-input${formErrors.start_date ? ' input-error' : ''}`}
-                        dateFormat="dd/MM/yyyy"
-                        placeholderText="Sélectionner une date"
-                      />
-                      {formErrors.start_date && (
-                        <div className="error-message">
-                          <i className="ri-error-warning-line error-icon"></i>
-                          <span className="error-text">{formErrors.start_date}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="task-form-field">
-                      <label className="task-form-label">
-                        Date de fin <span className="Attention-text ms-1">*</span>
-                      </label>
-                      <DatePicker
-                        selected={taskForm.deadline}
-                        onChange={(date) => setTaskForm({...taskForm, deadline: date})}
-                        className={`task-form-input${formErrors.deadline ? ' input-error' : ''}`}
-                        dateFormat="dd/MM/yyyy"
-                        placeholderText="Sélectionner une date"
-                        minDate={taskForm.start_date}
-                      />
-                      {formErrors.deadline && (
-                        <div className="error-message">
-                          <i className="ri-error-warning-line error-icon"></i>
-                          <span className="error-text">{formErrors.deadline}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="task-form-row">
-                    <div className="task-form-field">
-                      <label className="task-form-label">
-                        Statut
-                      </label>
-                      {taskStatuses.length > 0 ? (
-                        <select
-                          value={taskForm.status_id}
-                          onChange={(e) => setTaskForm({...taskForm, status_id: Number(e.target.value)})}
-                          className="task-form-select"
-                        >
-                          {taskStatuses.map((status) => (
-                            <option key={status.id} value={status.id}>
-                              {status.title}
-                            </option>
-                          ))}
-                        </select>
-                      ) : (
-                        <div className="text-sm text-orange-600 dark:text-orange-400 p-2 bg-orange-50 dark:bg-orange-900/20 rounded border border-orange-200 dark:border-orange-800">
-                          <i className="ri-information-line mr-1"></i>
-                          Chargement des statuts...
-                        </div>
-                      )}
-                    </div>
-                    <div className="task-form-field">
-                      <label className="task-form-label">
-                        Avancement <span className="text-xs text-gray-400">(%)</span>
-                      </label>
-                      <div className="flex items-center gap-4">
+                {/* Determine if only Avancement should be editable */}
+                {editingTask && user?.data?.id !== project.creator?.id && user?.data?.id === editingTask.assigned_to ? (
+                  <>
+                    <div className="task-form-grid">
+                      <div className="task-form-field">
+                        <label className="task-form-label">
+                          Titre de la tâche <span className="Attention-text ms-1">*</span>
+                        </label>
                         <input
-                          type="range"
-                          min="0"
-                          max="100"
-                          value={taskForm.avancement}
-                          onChange={(e) => setTaskForm({ ...taskForm, avancement: e.target.value })}
-                          className="w-full accent-blue-500"
+                          type="text"
+                          value={taskForm.title}
+                          className={`task-form-input ${formErrors.title ? 'input-error' : ''}`}
+                          placeholder="Entrez le titre de la tâche"
+                          disabled
                         />
-                        <span className="font-semibold text-blue-600 dark:text-blue-400 min-w-[40px] text-right">
-                          {taskForm.avancement}%
-                        </span>
+                        {renderErrorMessage('title')}
                       </div>
-                      {renderErrorMessage('avancement')}
-                    </div>
-                  </div>
-
-                  <div className="task-form-field">
-                    <label className="task-form-label">
-                      Assigner à
-                    </label>
-                    {members.length === 0 ? (
-                      <div className="text-sm text-orange-600 dark:text-orange-400 p-2 bg-orange-50 dark:bg-orange-900/20 rounded border border-orange-200 dark:border-orange-800">
-                        <i className="ri-information-line mr-1"></i>
-                        Aucun membre dans le projet. Veuillez d'abord ajouter des membres au projet.
+                      <div className="task-form-field">
+                        <label className="task-form-label">Description</label>
+                        <textarea
+                          value={taskForm.description}
+                          className="task-form-textarea"
+                          rows={3}
+                          placeholder="Décrivez la tâche"
+                          disabled
+                        />
                       </div>
-                    ) : (
-                      <Select
-                        options={members.map(member => ({
-                          value: member.user_id,
-                          label: member.user?.full_name || member.user?.name || 'Utilisateur inconnu'
-                        }))}
-                        value={taskForm.assigned_to}
-                        onChange={(option) => setTaskForm({...taskForm, assigned_to: option})}
-                        placeholder="Sélectionner un membre du projet"
-                        isClearable
-                        className="task-form-select-container"
-                        classNamePrefix="task-form-select"
-                        menuPosition="fixed"
-                        menuPlacement="top"
-                      />
-                    )}
-                  </div>
-
-                  {/* PAC as Oui/Non and Par intérim as text input */}
-                  <div className="task-form-row">
-                    {/* PAC Oui/Non */}
-                    <div className="task-form-field">
-                      <label className="task-form-label">PAC</label>
-                      <div className="flex items-center gap-4">
-                        <label className="flex items-center">
+                      <div className="task-form-row">
+                        <div className="task-form-field">
+                          <label className="task-form-label">
+                            Date de début <span className="Attention-text ms-1">*</span>
+                          </label>
                           <input
-                            type="radio"
-                            name="pac"
-                            value="oui"
-                            checked={taskForm.pac === 'oui'}
-                            onChange={() => setTaskForm({ ...taskForm, pac: 'oui' })}
-                            className="task-form-checkbox"
+                            type="text"
+                            value={taskForm.start_date ? taskForm.start_date.toLocaleDateString('fr-FR') : ''}
+                            className={`task-form-input${formErrors.start_date ? ' input-error' : ''}`}
+                            placeholder="Sélectionner une date"
+                            disabled
                           />
-                          <span className="ml-2">Oui</span>
-                        </label>
-                        <label className="flex items-center">
+                          {formErrors.start_date && (
+                            <div className="error-message">
+                              <i className="ri-error-warning-line error-icon"></i>
+                              <span className="error-text">{formErrors.start_date}</span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="task-form-field">
+                          <label className="task-form-label">
+                            Date de fin <span className="Attention-text ms-1">*</span>
+                          </label>
                           <input
-                            type="radio"
-                            name="pac"
-                            value="non"
-                            checked={taskForm.pac === 'non'}
-                            onChange={() => setTaskForm({ ...taskForm, pac: 'non' })}
-                            className="task-form-checkbox"
+                            type="text"
+                            value={taskForm.deadline ? taskForm.deadline.toLocaleDateString('fr-FR') : ''}
+                            className={`task-form-input${formErrors.deadline ? ' input-error' : ''}`}
+                            placeholder="Sélectionner une date"
+                            disabled
                           />
-                          <span className="ml-2">Non</span>
-                        </label>
+                          {formErrors.deadline && (
+                            <div className="error-message">
+                              <i className="ri-error-warning-line error-icon"></i>
+                              <span className="error-text">{formErrors.deadline}</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      {renderErrorMessage('pac')}
+                      <div className="task-form-row">
+                        <div className="task-form-field">
+                          <label className="task-form-label">Statut</label>
+                          <select
+                            value={taskForm.status_id}
+                            className="task-form-select"
+                            disabled
+                          >
+                            {taskStatuses.map((status) => (
+                              <option key={status.id} value={status.id}>
+                                {status.title}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="task-form-field">
+                          <label className="task-form-label">
+                            Avancement <span className="text-xs text-gray-400">(%)</span>
+                          </label>
+                          <div className="flex items-center gap-4">
+                            <input
+                              type="range"
+                              min="0"
+                              max="100"
+                              value={taskForm.avancement}
+                              onChange={(e) => setTaskForm({ ...taskForm, avancement: e.target.value })}
+                              className="w-full accent-blue-500"
+                            />
+                            <span className="font-semibold text-blue-600 dark:text-blue-400 min-w-[40px] text-right">
+                              {taskForm.avancement}%
+                            </span>
+                          </div>
+                          {renderErrorMessage('avancement')}
+                        </div>
+                      </div>
+                      <div className="task-form-field">
+                        <label className="task-form-label">Assigner à</label>
+                        <Select
+                          options={members.map(member => ({
+                            value: member.user_id,
+                            label: member.user?.full_name || member.user?.name || 'Utilisateur inconnu'
+                          }))}
+                          value={taskForm.assigned_to}
+                          className="task-form-select-container"
+                          classNamePrefix="task-form-select"
+                          menuPosition="fixed"
+                          menuPlacement="top"
+                          isDisabled
+                        />
+                      </div>
+                      <div className="task-form-row">
+                        <div className="task-form-field">
+                          <label className="task-form-label">PAC</label>
+                          <div className="flex items-center gap-4">
+                            <label className="flex items-center">
+                              <input
+                                type="radio"
+                                name="pac"
+                                value="oui"
+                                checked={taskForm.pac === 'oui'}
+                                className="task-form-checkbox"
+                                disabled
+                              />
+                              <span className="ml-2">Oui</span>
+                            </label>
+                            <label className="flex items-center">
+                              <input
+                                type="radio"
+                                name="pac"
+                                value="non"
+                                checked={taskForm.pac === 'non'}
+                                className="task-form-checkbox"
+                                disabled
+                              />
+                              <span className="ml-2">Non</span>
+                            </label>
+                          </div>
+                          {renderErrorMessage('pac')}
+                        </div>
+                        <div className="task-form-field">
+                          <label className="task-form-label">Par intérim ?</label>
+                          <input
+                            type="text"
+                            value={taskForm.par_interim}
+                            className="task-form-input"
+                            placeholder="Nom du remplaçant ou info"
+                            disabled
+                          />
+                          {renderErrorMessage('par_interim')}
+                        </div>
+                      </div>
+                      <div className="task-form-field">
+                        <label className="task-form-label">Commentaire</label>
+                        <textarea
+                          value={taskForm.commentaire}
+                          className="task-form-textarea"
+                          rows={2}
+                          placeholder="Ajouter un commentaire (optionnel)"
+                          disabled
+                        />
+                      </div>
                     </div>
-                    {/* Par intérim as text input */}
+                  </>
+                ) : (
+                  <div className="task-form-grid">
                     <div className="task-form-field">
-                      <label className="task-form-label">Par intérim ?</label>
+                      <label className="task-form-label">
+                        Titre de la tâche <span className="Attention-text ms-1">*</span>
+                      </label>
                       <input
                         type="text"
-                        value={taskForm.par_interim}
-                        onChange={(e) => setTaskForm({ ...taskForm, par_interim: e.target.value })}
-                        className="task-form-input"
-                        placeholder="Nom du remplaçant ou info"
+                        value={taskForm.title}
+                        onChange={(e) => setTaskForm({...taskForm, title: e.target.value})}
+                        className={`task-form-input ${formErrors.title ? 'input-error' : ''}`}
+                        placeholder="Entrez le titre de la tâche"
                       />
-                      {renderErrorMessage('par_interim')}
+                      {renderErrorMessage('title')}
+                    </div>
+
+                    <div className="task-form-field">
+                      <label className="task-form-label">
+                        Description
+                      </label>
+                      <textarea
+                        value={taskForm.description}
+                        onChange={(e) => setTaskForm({...taskForm, description: e.target.value})}
+                        className="task-form-textarea"
+                        rows={3}
+                        placeholder="Décrivez la tâche"
+                      />
+                    </div>
+
+                    <div className="task-form-row">
+                      <div className="task-form-field">
+                        <label className="task-form-label">
+                          Date de début <span className="Attention-text ms-1">*</span>
+                        </label>
+                        <DatePicker
+                          selected={taskForm.start_date}
+                          onChange={(date) => setTaskForm({...taskForm, start_date: date})}
+                          className={`task-form-input${formErrors.start_date ? ' input-error' : ''}`}
+                          dateFormat="dd/MM/yyyy"
+                          placeholderText="Sélectionner une date"
+                        />
+                        {formErrors.start_date && (
+                          <div className="error-message">
+                            <i className="ri-error-warning-line error-icon"></i>
+                            <span className="error-text">{formErrors.start_date}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="task-form-field">
+                        <label className="task-form-label">
+                          Date de fin <span className="Attention-text ms-1">*</span>
+                        </label>
+                        <DatePicker
+                          selected={taskForm.deadline}
+                          onChange={(date) => setTaskForm({...taskForm, deadline: date})}
+                          className={`task-form-input${formErrors.deadline ? ' input-error' : ''}`}
+                          dateFormat="dd/MM/yyyy"
+                          placeholderText="Sélectionner une date"
+                          minDate={taskForm.start_date}
+                        />
+                        {formErrors.deadline && (
+                          <div className="error-message">
+                            <i className="ri-error-warning-line error-icon"></i>
+                            <span className="error-text">{formErrors.deadline}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="task-form-row">
+                      <div className="task-form-field">
+                        <label className="task-form-label">
+                          Statut
+                        </label>
+                        {taskStatuses.length > 0 ? (
+                          <select
+                            value={taskForm.status_id}
+                            onChange={(e) => setTaskForm({...taskForm, status_id: Number(e.target.value)})}
+                            className="task-form-select"
+                          >
+                            {taskStatuses.map((status) => (
+                              <option key={status.id} value={status.id}>
+                                {status.title}
+                              </option>
+                            ))}
+                          </select>
+                        ) : (
+                          <div className="text-sm text-orange-600 dark:text-orange-400 p-2 bg-orange-50 dark:bg-orange-900/20 rounded border border-orange-200 dark:border-orange-800">
+                            <i className="ri-information-line mr-1"></i>
+                            Chargement des statuts...
+                          </div>
+                        )}
+                      </div>
+                      <div className="task-form-field">
+                        <label className="task-form-label">
+                          Avancement <span className="text-xs text-gray-400">(%)</span>
+                        </label>
+                        <div className="flex items-center gap-4">
+                          <input
+                            type="range"
+                            min="0"
+                            max="100"
+                            value={taskForm.avancement}
+                            onChange={(e) => setTaskForm({ ...taskForm, avancement: e.target.value })}
+                            className="w-full accent-blue-500"
+                          />
+                          <span className="font-semibold text-blue-600 dark:text-blue-400 min-w-[40px] text-right">
+                            {taskForm.avancement}%
+                          </span>
+                        </div>
+                        {renderErrorMessage('avancement')}
+                      </div>
+                    </div>
+
+                    <div className="task-form-field">
+                      <label className="task-form-label">
+                        Assigner à
+                      </label>
+                      {members.length === 0 ? (
+                        <div className="text-sm text-orange-600 dark:text-orange-400 p-2 bg-orange-50 dark:bg-orange-900/20 rounded border border-orange-200 dark:border-orange-800">
+                          <i className="ri-information-line mr-1"></i>
+                          Aucun membre dans le projet. Veuillez d'abord ajouter des membres au projet.
+                        </div>
+                      ) : (
+                        <Select
+                          options={members.map(member => ({
+                            value: member.user_id,
+                            label: member.user?.full_name || member.user?.name || 'Utilisateur inconnu'
+                          }))}
+                          value={taskForm.assigned_to}
+                          onChange={(option) => setTaskForm({...taskForm, assigned_to: option})}
+                          placeholder="Sélectionner un membre du projet"
+                          isClearable
+                          className="task-form-select-container"
+                          classNamePrefix="task-form-select"
+                          menuPosition="fixed"
+                          menuPlacement="top"
+                        />
+                      )}
+                    </div>
+
+                    {/* PAC as Oui/Non and Par intérim as text input */}
+                    <div className="task-form-row">
+                      {/* PAC Oui/Non */}
+                      <div className="task-form-field">
+                        <label className="task-form-label">PAC</label>
+                        <div className="flex items-center gap-4">
+                          <label className="flex items-center">
+                            <input
+                              type="radio"
+                              name="pac"
+                              value="oui"
+                              checked={taskForm.pac === 'oui'}
+                              onChange={() => setTaskForm({ ...taskForm, pac: 'oui' })}
+                              className="task-form-checkbox"
+                            />
+                            <span className="ml-2">Oui</span>
+                          </label>
+                          <label className="flex items-center">
+                            <input
+                              type="radio"
+                              name="pac"
+                              value="non"
+                              checked={taskForm.pac === 'non'}
+                              onChange={() => setTaskForm({ ...taskForm, pac: 'non' })}
+                              className="task-form-checkbox"
+                            />
+                            <span className="ml-2">Non</span>
+                          </label>
+                        </div>
+                        {renderErrorMessage('pac')}
+                      </div>
+                      {/* Par intérim as text input */}
+                      <div className="task-form-field">
+                        <label className="task-form-label">Par intérim ?</label>
+                        <input
+                          type="text"
+                          value={taskForm.par_interim}
+                          onChange={(e) => setTaskForm({ ...taskForm, par_interim: e.target.value })}
+                          className="task-form-input"
+                          placeholder="Nom du remplaçant ou info"
+                        />
+                        {renderErrorMessage('par_interim')}
+                      </div>
+                    </div>
+                    <div className="task-form-field">
+                      <label className="task-form-label">
+                        Commentaire
+                      </label>
+                      <textarea
+                        value={taskForm.commentaire}
+                        onChange={(e) => setTaskForm({ ...taskForm, commentaire: e.target.value })}
+                        className="task-form-textarea"
+                        rows={2}
+                        placeholder="Ajouter un commentaire (optionnel)"
+                      />
                     </div>
                   </div>
-                  <div className="task-form-field">
-                    <label className="task-form-label">
-                      Commentaire
-                    </label>
-                    <textarea
-                      value={taskForm.commentaire}
-                      onChange={(e) => setTaskForm({ ...taskForm, commentaire: e.target.value })}
-                      className="task-form-textarea"
-                      rows={2}
-                      placeholder="Ajouter un commentaire (optionnel)"
-                    />
-                  </div>
-                </div>
+                )}
               </form>
             </div>
 

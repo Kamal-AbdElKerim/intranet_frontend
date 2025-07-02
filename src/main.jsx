@@ -20,6 +20,7 @@ import Profile from './container/Pages_DemandesAdministratives/profile/Profile.j
 import Objectifs from './container/Pmo/Objectifs/Objectifs.jsx'
 import Projects from './container/Pmo/Projects/Projects.jsx'
 import ProjectDetails from './container/Pmo/Projects/ProjectDetails.jsx'
+import PmoDashboard from './container/Pmo/PmoDashboard.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.Fragment>
@@ -49,6 +50,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path="Pmo/Objectifs" element={<Objectifs />} />
                   <Route path="Pmo/Projects" element={<Projects />} />
                   <Route path="Pmo/Projects/:projectId" element={<ProjectDetails />} />
+                  <Route path="Pmo/Dashboard" element={<PmoDashboard />} />
                
                   {/* <Route path="DemandesAdministratives/pages/empty" element={<Empty />} /> */}
                   {/* ... other routes ... */}

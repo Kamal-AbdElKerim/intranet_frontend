@@ -10,6 +10,7 @@ import { ToastContainer } from 'react-toastify';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import RoleDropdown from '../../../components/ui/RoleDropdown.jsx';
 
 // Custom styles for range slider and select
 const rangeSliderStyles = `
@@ -165,11 +166,16 @@ const Objectifs = () => {
   const [showViewModal, setShowViewModal] = useState(false);
   const [showProjectsModal, setShowProjectsModal] = useState(false);
   const [years, setYears] = useState([]);
+  const [roleView, setRoleView] = useState(() => {
+    // Try to get saved role view on initial load
+    const saved = localStorage.getItem('pmo_role_view');
+    return saved || 'admin';
+  });
 
   const navigate = useNavigate();
 
   // Fetch objectifs
-  const fetchObjectifs = async (page = 1, search = '', status = '', year = '') => {
+  const fetchObjectifs = async (page = 1, search = '', status = '', year = '', customRoleView = null) => {
     try {
       setLoading(true);
       const queryParams = new URLSearchParams({
@@ -179,7 +185,8 @@ const Objectifs = () => {
         sort_key: sortConfig.key || '',
         sort_direction: sortConfig.direction || 'desc',
         status: status || '',
-        year: year || ''
+        year: year || '',
+        role_view: customRoleView || roleView || 'all'
       }).toString();
       const response = await axiosInstance.get(`/pmo/objectifs?${queryParams}`);
       if (response.data?.status === 'success' && response.data?.data) {
@@ -242,12 +249,18 @@ const Objectifs = () => {
     }
   };
 
+  // On mount, fetchEntities and fetchYears (not dependent on roleView)
   useEffect(() => {
-    fetchObjectifs(1, '', '', '');
     fetchEntities();
     fetchYears();
-    // eslint-disable-next-line
   }, []);
+
+  // Fetch objectifs when roleView changes (or on mount)
+  useEffect(() => {
+    fetchObjectifs(1, '', '', '', roleView);
+    // Save roleView to localStorage
+    localStorage.setItem('pmo_role_view', roleView);
+  }, [roleView]);
 
   // Prevent body scroll when modals are open
   useEffect(() => {
@@ -361,7 +374,7 @@ const Objectifs = () => {
         // Add a small delay to ensure backend has processed the update
         setTimeout(() => {
           console.log('Refreshing data...');
-          fetchObjectifs(pagination.current, searchTerm, statusFilter, yearFilter);
+          fetchObjectifs(pagination.current, searchTerm, statusFilter, yearFilter, roleView);
         }, 500);
       } else {
         console.error('Response not successful:', response.data);
@@ -377,39 +390,39 @@ const Objectifs = () => {
   };
 
   const handlePageChange = (page) => {
-    fetchObjectifs(page, searchTerm, statusFilter, yearFilter);
+    fetchObjectifs(page, searchTerm, statusFilter, yearFilter, roleView);
   };
 
   const handleSort = (key) => {
     const direction = sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
     setSortConfig({ key, direction });
-    fetchObjectifs(1, searchTerm, statusFilter, yearFilter);
+    fetchObjectifs(1, searchTerm, statusFilter, yearFilter, roleView);
   };
 
   const handleSearch = () => {
-    fetchObjectifs(1, searchTerm, statusFilter, yearFilter);
+    fetchObjectifs(1, searchTerm, statusFilter, yearFilter, roleView);
   };
 
   const handleClearSearch = () => {
     setSearchTerm('');
-    fetchObjectifs(1, '', statusFilter, yearFilter);
+    fetchObjectifs(1, '', statusFilter, yearFilter, roleView);
   };
 
   const handleStatusFilter = (status) => {
     setStatusFilter(status);
-    fetchObjectifs(1, searchTerm, status, yearFilter);
+    fetchObjectifs(1, searchTerm, status, yearFilter, roleView);
   };
 
   const handleYearFilter = (year) => {
     setYearFilter(year);
-    fetchObjectifs(1, searchTerm, statusFilter, year);
+    fetchObjectifs(1, searchTerm, statusFilter, year, roleView);
   };
 
   const handleClearFilters = () => {
     setSearchTerm('');
     setStatusFilter('');
     setYearFilter('');
-    fetchObjectifs(1, '', '', '');
+    fetchObjectifs(1, '', '', '', roleView);
   };
 
   const handleAddObjectif = () => {
@@ -466,7 +479,7 @@ const Objectifs = () => {
       if (response.data?.status === 'success') {
         ToastService.success('Objectif supprimé avec succès');
         setObjectifToDelete(null);
-        fetchObjectifs(pagination.current, searchTerm, statusFilter, yearFilter);
+        fetchObjectifs(pagination.current, searchTerm, statusFilter, yearFilter, roleView);
       } else {
         ToastService.error(response.data?.message || 'Erreur lors de la suppression');
       }
@@ -659,68 +672,74 @@ const Objectifs = () => {
                   Gestion des Objectifs
                 </div>
                 <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-              
-    {/* Export Buttons */}
-    <div className="flex items-center gap-3">
-                      {/* Excel Export Button */}
-                      <button
-                        onClick={handleExportExcel}
-                        disabled={loading || objectifs.length === 0 || exportingExcel}
-                        className="relative flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 disabled:from-emerald-300 disabled:to-emerald-400 text-white rounded-xl font-semibold text-sm transition-all duration-300 shadow-lg hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50 group overflow-hidden"
-                        title="Exporter vers Excel"
-                      >
-                        {/* Loading spinner */}
-                        {exportingExcel && (
-                          <div className="absolute inset-0 bg-emerald-600/80 flex items-center justify-center rounded-xl">
-                            <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-                          </div>
-                        )}
-                        
-                        {/* Button content */}
-                        <div className="flex items-center gap-2">
-                          <i className={`ri-file-excel-2-line text-lg transition-transform ${exportingExcel ? 'animate-pulse' : 'group-hover:scale-110'}`}></i>
-                          <span>{exportingExcel ? 'Export...' : 'Excel'}</span>
+                  <RoleDropdown
+                    fetchProjects={fetchObjectifs}
+                    searchTerm={searchTerm}
+                    statusFilter={statusFilter}
+                    yearFilter={yearFilter}
+                    onRoleViewChange={setRoleView}
+                  />
+                  {/* Export Buttons */}
+                  <div className="flex items-center gap-3">
+                    {/* Excel Export Button */}
+                    <button
+                      onClick={handleExportExcel}
+                      disabled={loading || objectifs.length === 0 || exportingExcel}
+                      className="relative flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 disabled:from-emerald-300 disabled:to-emerald-400 text-white rounded-xl font-semibold text-sm transition-all duration-300 shadow-lg hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50 group overflow-hidden"
+                      title="Exporter vers Excel"
+                    >
+                      {/* Loading spinner */}
+                      {exportingExcel && (
+                        <div className="absolute inset-0 bg-emerald-600/80 flex items-center justify-center rounded-xl">
+                          <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
                         </div>
-                        
-                        {/* Shine effect */}
-                        <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:translate-x-full transition-transform duration-1000"></div>
-                      </button>
+                      )}
                       
-                      {/* PDF Export Button */}
-                      <button
-                        onClick={handleExportPDF}
-                        disabled={loading || objectifs.length === 0 || exportingPDF}
-                        className="relative flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 disabled:from-red-300 disabled:to-red-400 text-white rounded-xl font-semibold text-sm transition-all duration-300 shadow-lg hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50 group overflow-hidden"
-                        title="Télécharger PDF" 
-                        style={{
-                          background: 'rgb(129 22 22 / 96%)',
-                        }}
-                      >
-                        {/* Loading spinner */}
-                        {exportingPDF && (
-                          <div className="absolute inset-0 bg-red-600/80 flex items-center justify-center rounded-xl">
-                            <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-                          </div>
-                        )}
-                        
-                        {/* Button content */}
-                        <div className="flex items-center gap-2">
-                          <i className={`ri-file-pdf-line text-lg transition-transform ${exportingPDF ? 'animate-pulse' : 'group-hover:scale-110'}`}></i>
-                          <span>{exportingPDF ? 'Export...' : 'PDF'}</span>
-                        </div>
-                        
-                        {/* Shine effect */}
-                        <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:translate-x-full transition-transform duration-1000"></div>
-                      </button>
+                      {/* Button content */}
+                      <div className="flex items-center gap-2">
+                        <i className={`ri-file-excel-2-line text-lg transition-transform ${exportingExcel ? 'animate-pulse' : 'group-hover:scale-110'}`}></i>
+                        <span>{exportingExcel ? 'Export...' : 'Excel'}</span>
+                      </div>
                       
-                      {/* Export Info Tooltip */}
-                      {/* {(objectifs.length > 0) && (
-                        <div className="flex items-center gap-1 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-medium border border-blue-200 dark:border-blue-700">
-                          <i className="ri-information-line"></i>
-                          <span>Export complet avec filtres</span>
+                      {/* Shine effect */}
+                      <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:translate-x-full transition-transform duration-1000"></div>
+                    </button>
+                    
+                    {/* PDF Export Button */}
+                    <button
+                      onClick={handleExportPDF}
+                      disabled={loading || objectifs.length === 0 || exportingPDF}
+                      className="relative flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 disabled:from-red-300 disabled:to-red-400 text-white rounded-xl font-semibold text-sm transition-all duration-300 shadow-lg hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50 group overflow-hidden"
+                      title="Télécharger PDF" 
+                      style={{
+                        background: 'rgb(129 22 22 / 96%)',
+                      }}
+                    >
+                      {/* Loading spinner */}
+                      {exportingPDF && (
+                        <div className="absolute inset-0 bg-red-600/80 flex items-center justify-center rounded-xl">
+                          <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
                         </div>
-                      )} */}
-                    </div>
+                      )}
+                      
+                      {/* Button content */}
+                      <div className="flex items-center gap-2">
+                        <i className={`ri-file-pdf-line text-lg transition-transform ${exportingPDF ? 'animate-pulse' : 'group-hover:scale-110'}`}></i>
+                        <span>{exportingPDF ? 'Export...' : 'PDF'}</span>
+                      </div>
+                      
+                      {/* Shine effect */}
+                      <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:translate-x-full transition-transform duration-1000"></div>
+                    </button>
+                    
+                    {/* Export Info Tooltip */}
+                    {/* {(objectifs.length > 0) && (
+                      <div className="flex items-center gap-1 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-medium border border-blue-200 dark:border-blue-700">
+                        <i className="ri-information-line"></i>
+                        <span>Export complet avec filtres</span>
+                      </div>
+                    )} */}
+                  </div>
 
                   <button
                     onClick={handleAddObjectif}
