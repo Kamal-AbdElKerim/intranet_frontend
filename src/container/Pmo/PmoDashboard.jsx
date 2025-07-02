@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../Interceptor/axiosInstance.js';
 import RoleDropdown from '../../components/ui/RoleDropdown.jsx';
-import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from 'recharts';
+import ReactApexChart from 'react-apexcharts';
 
 const cardStyles = {
   card: 'flex flex-col items-center justify-center bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 m-2 min-w-[180px] min-h-[120px] transition-all duration-300 hover:scale-105 hover:shadow-xl',
@@ -103,18 +103,65 @@ const PmoDashboard = () => {
     fetchStats(currentRole);
   }, [refreshKey]);
 
-  // Card rendering helper
-  const StatCard = ({ icon, title, value, color }) => (
-    <div className={cardStyles.card} style={color ? { borderTop: `4px solid ${color}` } : {}}>
-      <i className={`${icon} ${cardStyles.icon}`} style={color ? { color } : {}}></i>
-      <div className={cardStyles.title}>{title}</div>
-      <div className={cardStyles.value}>{value}</div>
-    </div>
-  );
+  // Chart options for projects
+  const projectPieOptions = {
+    chart: { type: 'donut', fontFamily: 'inherit', height: 300 },
+    labels: ['Ouverts', 'Planifiés', 'En cours', 'Terminés', 'En attente', 'Annulés', 'En retard'],
+    colors: ['#22c55e', '#3b82f6', '#f59e42', '#10b981', '#fbbf24', '#ef4444', '#e11d48'],
+    legend: { position: 'bottom', fontSize: '14px', fontWeight: 500 },
+    dataLabels: { enabled: true, style: { fontSize: '14px', fontWeight: 600, colors: ['#fff'] } },
+    plotOptions: { pie: { donut: { size: '70%' } } },
+    responsive: [{ breakpoint: 480, options: { chart: { height: 250 }, legend: { position: 'bottom' } } }],
+  };
+  const projectPieSeries = [
+    projectStats?.open ?? 0,
+    projectStats?.planned ?? 0,
+    projectStats?.in_progress ?? 0,
+    projectStats?.completed ?? 0,
+    projectStats?.hold ?? 0,
+    projectStats?.canceled ?? 0,
+    projectStats?.overdue ?? 0,
+  ];
+  const projectBarOptions = {
+    chart: { type: 'bar', height: 300, fontFamily: 'inherit' },
+    plotOptions: { bar: { borderRadius: 4, columnWidth: '55%' } },
+    dataLabels: { enabled: true },
+    xaxis: { categories: ['Ouverts', 'Planifiés', 'En cours', 'Terminés', 'En attente', 'Annulés', 'En retard'] },
+    colors: ['#6366f1'],
+    legend: { show: false },
+  };
+  const projectBarSeries = [{ name: 'Projets', data: projectPieSeries }];
+
+  // Chart options for objectifs
+  const objectifPieOptions = {
+    chart: { type: 'donut', fontFamily: 'inherit', height: 300 },
+    labels: ['Actifs', 'En attente', 'Terminés', 'Annulés', 'En retard'],
+    colors: ['#22c55e', '#fbbf24', '#10b981', '#ef4444', '#e11d48'],
+    legend: { position: 'bottom', fontSize: '14px', fontWeight: 500 },
+    dataLabels: { enabled: true, style: { fontSize: '14px', fontWeight: 600, colors: ['#fff'] } },
+    plotOptions: { pie: { donut: { size: '70%' } } },
+    responsive: [{ breakpoint: 480, options: { chart: { height: 250 }, legend: { position: 'bottom' } } }],
+  };
+  const objectifPieSeries = [
+    objectifStats?.active ?? 0,
+    objectifStats?.pending ?? 0,
+    objectifStats?.completed ?? 0,
+    objectifStats?.cancelled ?? 0,
+    objectifStats?.overdue ?? 0,
+  ];
+  const objectifBarOptions = {
+    chart: { type: 'bar', height: 300, fontFamily: 'inherit' },
+    plotOptions: { bar: { borderRadius: 4, columnWidth: '55%' } },
+    dataLabels: { enabled: true },
+    xaxis: { categories: ['Actifs', 'En attente', 'Terminés', 'Annulés', 'En retard'] },
+    colors: ['#22c55e'],
+    legend: { show: false },
+  };
+  const objectifBarSeries = [{ name: 'Objectifs', data: objectifPieSeries }];
 
   return (
-    <div className="p-6">
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+    <div className="p-6 bg-[#f9fafb] min-h-screen">
+      <div className="flex flex-col sm:flex-row justify-start items-center mb-8 gap-4">
         <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Tableau de bord PMO</h1>
         <RoleDropdown onRoleViewChange={handleRoleChange} />
       </div>
@@ -124,95 +171,59 @@ const PmoDashboard = () => {
         </div>
       ) : (
         <>
-          <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-4">Statistiques des Projets</h2>
-          <div className="flex flex-col lg:flex-row gap-8 mb-8">
-            <div className="flex-1 bg-white dark:bg-gray-800 rounded-xl shadow-md p-4">
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={getProjectStatusData(projectStats)}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={100}
-                    label
-                  >
-                    {getProjectStatusData(projectStats).map((entry, index) => (
-                      <Cell key={`cell-project-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            <div className="box hrm-main-card primary w-full">
+              <div className="box-body flex items-center gap-4">
+                <span className="avatar bg-primary !text-white">
+                  <i className="ri-folder-3-line text-[1.5rem]"></i>
+                </span>
+                <div>
+                  <span className="font-semibold text-[#8c9097] dark:text-white/50 block mb-1">Total Projets</span>
+                  <h5 className="font-semibold mb-1 text-[1.25rem]">{projectStats?.total ?? '-'}</h5>
+                </div>
+              </div>
             </div>
-            <div className="flex-1 bg-white dark:bg-gray-800 rounded-xl shadow-md p-4">
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={getProjectStatusData(projectStats)}>
-                  <XAxis dataKey="name" />
-                  <YAxis allowDecimals={false} />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="value" fill="#6366f1" />
-                </BarChart>
-              </ResponsiveContainer>
+            <div className="box hrm-main-card success w-full">
+              <div className="box-body flex items-center gap-4">
+                <span className="avatar bg-success !text-white">
+                  <i className="ri-folder-3-line text-[1.5rem]"></i>
+                </span>
+                <div>
+                  <span className="font-semibold text-[#8c9097] dark:text-white/50 block mb-1">Total Objectifs</span>
+                  <h5 className="font-semibold mb-1 text-[1.25rem]">{objectifStats?.total ?? '-'}</h5>
+                </div>
+              </div>
             </div>
           </div>
-          <div className={cardStyles.grid}>
-            <StatCard icon={statIcons.total} title="Total Projets" value={projectStats?.total ?? '-'} color="#6366f1" />
-            <StatCard icon={statIcons.open} title="Ouverts" value={projectStats?.open ?? '-'} color="#22c55e" />
-            <StatCard icon={statIcons.planned} title="Planifiés" value={projectStats?.planned ?? '-'} color="#3b82f6" />
-            <StatCard icon={statIcons.in_progress} title="En cours" value={projectStats?.in_progress ?? '-'} color="#f59e42" />
-            <StatCard icon={statIcons.completed} title="Terminés" value={projectStats?.completed ?? '-'} color="#10b981" />
-            <StatCard icon={statIcons.hold} title="En attente" value={projectStats?.hold ?? '-'} color="#fbbf24" />
-            <StatCard icon={statIcons.canceled} title="Annulés" value={projectStats?.canceled ?? '-'} color="#ef4444" />
-            <StatCard icon={statIcons.overdue} title="En retard" value={projectStats?.overdue ?? '-'} color="#e11d48" />
-            <StatCard icon={statIcons.total_value} title="Valeur totale (DH)" value={projectStats?.total_value?.toLocaleString() ?? '-'} color="#a21caf" />
-            <StatCard icon={statIcons.completed_value} title="Valeur terminée (DH)" value={projectStats?.completed_value?.toLocaleString() ?? '-'} color="#0e7490" />
-          </div>
-          <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mt-10 mb-4">Statistiques des Objectifs</h2>
-          <div className="flex flex-col lg:flex-row gap-8 mb-8">
-            <div className="flex-1 bg-white dark:bg-gray-800 rounded-xl shadow-md p-4">
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={getObjectifStatusData(objectifStats)}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={100}
-                    label
-                  >
-                    {getObjectifStatusData(objectifStats).map((entry, index) => (
-                      <Cell key={`cell-objectif-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <div className="box w-full">
+              <div className="box-header font-semibold mb-2">Statistiques des Projets (Donut)</div>
+              <div className="box-body">
+                <ReactApexChart options={projectPieOptions} series={projectPieSeries} type="donut" height={300} />
+              </div>
             </div>
-            <div className="flex-1 bg-white dark:bg-gray-800 rounded-xl shadow-md p-4">
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={getObjectifStatusData(objectifStats)}>
-                  <XAxis dataKey="name" />
-                  <YAxis allowDecimals={false} />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="value" fill="#22c55e" />
-                </BarChart>
-              </ResponsiveContainer>
+            <div className="box w-full">
+              <div className="box-header font-semibold mb-2">Statistiques des Projets (Barres)</div>
+              <div className="box-body">
+                <ReactApexChart options={projectBarOptions} series={projectBarSeries} type="bar" height={300} />
+              </div>
             </div>
           </div>
-          <div className={cardStyles.grid}>
-            <StatCard icon={statIcons.total} title="Total Objectifs" value={objectifStats?.total ?? '-'} color="#6366f1" />
-            <StatCard icon={statIcons.active} title="Actifs" value={objectifStats?.active ?? '-'} color="#22c55e" />
-            <StatCard icon={statIcons.pending} title="En attente" value={objectifStats?.pending ?? '-'} color="#fbbf24" />
-            <StatCard icon={statIcons.completed} title="Terminés" value={objectifStats?.completed ?? '-'} color="#10b981" />
-            <StatCard icon={statIcons.cancelled} title="Annulés" value={objectifStats?.cancelled ?? '-'} color="#ef4444" />
-            <StatCard icon={statIcons.overdue} title="En retard" value={objectifStats?.overdue ?? '-'} color="#e11d48" />
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <div className="box w-full">
+              <div className="box-header font-semibold mb-2">Statistiques des Objectifs (Donut)</div>
+              <div className="box-body">
+                <ReactApexChart options={objectifPieOptions} series={objectifPieSeries} type="donut" height={300} />
+              </div>
+            </div>
+            <div className="box w-full">
+              <div className="box-header font-semibold mb-2">Statistiques des Objectifs (Barres)</div>
+              <div className="box-body">
+                <ReactApexChart options={objectifBarOptions} series={objectifBarSeries} type="bar" height={300} />
+              </div>
+            </div>
           </div>
         </>
       )}
