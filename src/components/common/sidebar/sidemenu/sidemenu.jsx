@@ -31,7 +31,7 @@ export const MENUITEMS = [
   //   ]
   // },
   {
-    path: `${import.meta.env.BASE_URL}DemandesAdministratives/dashboards`,
+    path: `${import.meta.env.BASE_URL}DemandesAdministratives`,
     icon: (<i className="side-menu__icon bx bx-home"></i>),
     type: "link",
     selected: false,
@@ -40,9 +40,9 @@ export const MENUITEMS = [
     title: "Dashboard",
   },
 
-  {
-    menutitle: "PAGES",
-  },
+  // {
+  //   menutitle: "PAGES",
+  // },
   {
     path: `${import.meta.env.BASE_URL}DemandesAdministratives/listeDemandes`,
     icon: (<i className="mdi mdi-format-list-bulleted side-menu__icon mb-2"></i>),
@@ -61,9 +61,9 @@ export const MENUITEMS = [
     active: false,
     title: "les Demandes (Validation)",
   },
-  {
-    menutitle: 'GENERAL',
-  },
+  // {
+  //   menutitle: 'GENERAL',
+  // },
   {
     path: `${import.meta.env.BASE_URL}admin/Users`,
     icon: (<i className="mdi mdi-account-group side-menu__icon mb-2"></i>),
@@ -74,7 +74,7 @@ export const MENUITEMS = [
     title: "Users",
   },
   {
-    path: `${import.meta.env.BASE_URL}Pmo/Dashboard`,
+    path: `${import.meta.env.BASE_URL}Pmo`,
     icon: (<i className="mdi mdi-chart-box side-menu__icon mb-2"></i>),
     type: "link",
     selected: false,

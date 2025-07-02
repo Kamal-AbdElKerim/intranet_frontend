@@ -40,9 +40,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 
               {/* Protected Routes (Dashboard and other pages) */}
               <Route element={<PrivateRoute />}>
-                {/* <Route path="Home" element={<Home />} /> */}
+                <Route path="Home" element={<Home />} />
                 <Route element={<App />}>
-                  <Route path="DemandesAdministratives/dashboards" element={<Crm />} />
+                  <Route path="DemandesAdministratives" element={<Crm />} />
                   <Route path="DemandesAdministratives/listeDemandes" element={<ListeDemandes />} />
                   <Route path="DemandesAdministratives/listeDemandesValidation" element={<ListeDemandesDirecteur />} />
                   <Route path="admin/Users" element={<Users />} />
@@ -50,7 +50,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path="Pmo/Objectifs" element={<Objectifs />} />
                   <Route path="Pmo/Projects" element={<Projects />} />
                   <Route path="Pmo/Projects/:projectId" element={<ProjectDetails />} />
-                  <Route path="Pmo/Dashboard" element={<PmoDashboard />} />
+                  <Route path="Pmo" element={<PmoDashboard />} />
                
                   {/* <Route path="DemandesAdministratives/pages/empty" element={<Empty />} /> */}
                   {/* ... other routes ... */}

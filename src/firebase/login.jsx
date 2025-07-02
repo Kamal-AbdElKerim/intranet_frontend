@@ -117,7 +117,7 @@ const Login = ({ ThemeChanger }) => {
     };
     
     const routeChange = () => {
-        const path = `${import.meta.env.BASE_URL}DemandesAdministratives/dashboards`;
+        const path = `${import.meta.env.BASE_URL}Home`;
         navigate(path);
     };
 

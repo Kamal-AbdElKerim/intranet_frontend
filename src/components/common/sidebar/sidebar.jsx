@@ -13,6 +13,31 @@ import '../../../assets/css/logo-animation.css';
 
 const Sidebar = ({ local_varaiable, ThemeChanger }) => {
   const [menuitems, setMenuitems] = useState(MENUITEMS);
+  const location = useLocation();
+
+  // Filter menu items based on section
+  function filterMenuItems(menuItems, section) {
+    return menuItems.filter(item => {
+      if (item.menutitle) return true; // Always keep section titles
+      if (!item.path) return false; // Skip items without a path
+      if (section === 'DemandesAdministratives') {
+        return item.path.includes('DemandesAdministratives');
+      }
+      if (section === 'Pmo') {
+        return item.path.includes('Pmo');
+      }
+      return true; // Default: show all
+    });
+  }
+
+  let section = null;
+  if (location.pathname.includes('/DemandesAdministratives')) {
+    section = 'DemandesAdministratives';
+  } else if (location.pathname.includes('/Pmo')) {
+    section = 'Pmo';
+  }
+
+  const filteredMenuItems = filterMenuItems(MENUITEMS, section);
 
   function closeMenuFn() {
     const closeMenuRecursively = (items) => {
@@ -41,7 +66,6 @@ const Sidebar = ({ local_varaiable, ThemeChanger }) => {
   }, []);
 
   // const location = useLocation();
-  const location = useLocation();
 
 
   function Onhover() {
@@ -622,7 +646,7 @@ const handleClick = (event) => {
             </svg></div>
 
             <ul className="main-menu" onClick={() => Sideclick()}>
-              {MENUITEMS.map((levelone) => (
+              {filteredMenuItems.map((levelone) => (
                 <Fragment key={Math.random()}>
                   <li className={`${levelone.menutitle ? 'slide__category' : ''} ${levelone.type === 'link' ? 'slide' : ''}
                        ${levelone.type === 'sub' ? 'slide has-sub' : ''} ${levelone?.active ? 'open' : ''} ${levelone?.selected ? 'active' : ''}`}>

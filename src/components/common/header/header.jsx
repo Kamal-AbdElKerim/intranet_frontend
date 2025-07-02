@@ -327,7 +327,7 @@ const Header = ({ local_varaiable, ThemeChanger }) => {
             <div className="header-content-right">
 
                   {/* Home Button */}
-                  {/* <div className="header-element header-home hidden !items-center sm:block !py-[1rem] md:!px-[0.65rem] px-2">
+                  <div className="header-element header-home hidden !items-center sm:block !py-[1rem] md:!px-[0.65rem] px-2">
                 <Link
                   to={`Home`}
                   className="hs-dropdown-toggle inline-flex items-center gap-2 rounded-full font-medium transition-all text-xs"
@@ -335,7 +335,7 @@ const Header = ({ local_varaiable, ThemeChanger }) => {
                 >
                   <i className="ti ti-home-2 text-[1.25rem] text-primary hover:text-primary/80 transition-colors duration-200"></i>
                 </Link>
-              </div> */}
+              </div>
 
               {/* Only show Holidays button for Admin RH */}
               {isAdminRH() && (

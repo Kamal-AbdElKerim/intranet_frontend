@@ -79,11 +79,11 @@ const Home = () => {
         users: `${dashboardData} utilisateurs`,
         access: 'Tous les employés',
         color: 'from-emerald-500 to-teal-500',
-        url: '/DemandesAdministratives/dashboards'
+        url: '/DemandesAdministratives'
     },      
     {
       id: 3,
-      name: 'sdcp',
+      name: 'Pmo',
       type: 'Documentation',
       status: 'Active',
       image: 'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a',
@@ -91,13 +91,13 @@ const Home = () => {
       users: '985 utilisateurs',
       access: 'Accès général',
       color: 'from-violet-500 to-purple-500',
-      url: '/documentation'
+      url: '/Pmo'
     },
     {
       id: 7,
       name: 'Méga - Organisation',
       type: 'Événementiel',
-      status: 'Active',
+      status: 'Maintenance',
       image: 'https://images.unsplash.com/photo-1511578314322-379afb476865',
       description: 'Méga - Organisation',
       users: 'À venir',
@@ -278,7 +278,14 @@ const Home = () => {
                     </div>
 
                     <button
-                      onClick={() => setSelectedSite(site)}
+                      onClick={e => {
+                        e.stopPropagation();
+                        if (site.status === 'Active') {
+                          navigate(site.url);
+                        } else {
+                          setShowComingSoonModal(true);
+                        }
+                      }}
                       className={`
                         w-full py-3 px-4 rounded-xl font-medium text-sm
                         transition-all duration-300 relative overflow-hidden
@@ -350,13 +357,8 @@ const Home = () => {
                     <div className="flex gap-4">
                       <button 
                         onClick={() => {
-                          if (selectedSite.id === 1) { // Demandes Administratives
-                            navigate(selectedSite.url);
-                            setSelectedSite(null);
-                          } else {
-                            setSelectedSite(null);
-                            setShowComingSoonModal(true);
-                          }
+                          setSelectedSite(null);
+                          setShowComingSoonModal(false);
                         }}
                         className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-8 py-4 rounded-xl font-medium hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-300"
                       >
